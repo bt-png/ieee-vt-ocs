@@ -26,9 +26,14 @@ def run():
     )
     AttendanceForm.form_submit_button(label="Submit")
 
+def gsheets():
+    conn = st.experimental_connection('gsheets', type=GSheetsConnection)
+    data = conn.read(worksheet='Sheet1')
+    st.dataframe(data)
+    
 def sample():
     st.write('test sample')
+    
 if __name__ == '__main__':
     run()
-elif __name__ == '__test__':
-    sample()
+    gsheets()
