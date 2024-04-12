@@ -30,7 +30,7 @@ def gsheets():
     conn = st.connection('gsheets', type=GSheetsConnection)
     data = conn.read(
         worksheet='Attendance',
-        ttl='5s'
+        ttl=0
         )
     st.dataframe(data)
     
