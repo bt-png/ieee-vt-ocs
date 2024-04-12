@@ -30,7 +30,7 @@ def gsheets():
     conn = st.connection('gsheets', type=GSheetsConnection)
     data = conn.read(
         worksheet='Attendance',
-        ttl=0
+        ttl=0,
         )
     st.dataframe(data)
     
@@ -38,5 +38,5 @@ def sample():
     st.write('test sample')
     
 if __name__ == '__main__':
-    run()
+    #run()
     gsheets()
