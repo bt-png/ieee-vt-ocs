@@ -28,7 +28,10 @@ def run():
 
 def gsheets():
     conn = st.connection('gsheets', type=GSheetsConnection)
-    data = conn.read(worksheet="Attendance")
+    data = conn.read(
+        worksheet='Attendance',
+        ttl='5s'
+        )
     st.dataframe(data)
     
 def sample():
