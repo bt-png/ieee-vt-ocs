@@ -1,3 +1,4 @@
 streamlit
 st-gsheets-connection
 google-cloud-firestore
+firebase_admin
