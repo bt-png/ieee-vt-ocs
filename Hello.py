@@ -2,12 +2,12 @@ import streamlit as st
 from streamlit.logger import get_logger
 from streamlit_gsheets import GSheetsConnection
 
-import pyrebase
+#import pyrebase
 
 #Firebase Authentication
-firebase = pyrebase.initialize_app(st.secrets['firebaseConfig'])
-auth = firebase.auth()
-db = firebase.database()
+#firebase = pyrebase.initialize_app(st.secrets['firebaseConfig'])
+#auth = firebase.auth()
+#db = firebase.database()
 
 
 import authenticate as auth
