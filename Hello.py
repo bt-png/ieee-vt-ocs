@@ -45,19 +45,19 @@ def run():
         LoginSubmit = Login.form_submit_button('Join')
         if LoginSubmit:
             auth.insert_user(firstname, lastname, email, password)
-    
+    '''
     with st.expander('User Info'):
         User = st.form('user')
-        username = User.text_input('User Name')
-        UserSubmit = User.form_submit_button('Check')
-        UserDoc = auth.get_user_doc(username)
-        AuthUser = auth.get_user(UserDoc)
-        st.write(auth.get_user_email(AuthUser))
+        #username = User.text_input('User Name')
+        #UserSubmit = User.form_submit_button('Check')
+        #UserDoc = auth.get_user_doc(username)
+        #AuthUser = auth.get_user(UserDoc)
+        #st.write(auth.get_user_email(AuthUser))
         with st.form('change email'):
             newemail = st.text_input('new email')
             if st.form_submit_button('Submit'):
                 auth.update_user_email(UserDoc, newemail)
-    
+    '''
     with st.expander('All Users'):
         Update = st.button('Run')
         if Update:
