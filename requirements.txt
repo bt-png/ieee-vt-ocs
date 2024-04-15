@@ -3,3 +3,4 @@ st-gsheets-connection
 google-cloud-firestore
 firebase_admin
 streamlit-authenticator
+pyrebase
