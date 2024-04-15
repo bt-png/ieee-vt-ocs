@@ -1,81 +1,55 @@
 import streamlit as st
-from streamlit.logger import get_logger
-from streamlit_gsheets import GSheetsConnection
+import auth_functions
 
-#import pyrebase
+## -------------------------------------------------------------------------------------------------
+## Not logged in -----------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------
+if 'user_info' not in st.session_state:
+    col1,col2,col3 = st.columns([1,2,1])
 
-#Firebase Authentication
-#firebase = pyrebase.initialize_app(st.secrets['firebaseConfig'])
-#auth = firebase.auth()
-#db = firebase.database()
+    # Authentication form layout
+    do_you_have_an_account = col2.selectbox(label='Do you have an account?',options=('Yes','No','I forgot my password'))
+    auth_form = col2.form(key='Authentication form',clear_on_submit=False)
+    email = auth_form.text_input(label='Email')
+    password = auth_form.text_input(label='Password',type='password') if do_you_have_an_account in {'Yes','No'} else auth_form.empty()
+    auth_notification = col2.empty()
 
+    # Sign In
+    if do_you_have_an_account == 'Yes' and auth_form.form_submit_button(label='Sign In',use_container_width=True,type='primary'):
+        with auth_notification, st.spinner('Signing in'):
+            auth_functions.sign_in(email,password)
 
-import authenticate as auth
+    # Create Account
+    elif do_you_have_an_account == 'No' and auth_form.form_submit_button(label='Create Account',use_container_width=True,type='primary'):
+        with auth_notification, st.spinner('Creating account'):
+            auth_functions.create_account(email,password)
 
-LOGGER = get_logger(__name__)
-UserDoc = None
+    # Password Reset
+    elif do_you_have_an_account == 'I forgot my password' and auth_form.form_submit_button(label='Send Password Reset Email',use_container_width=True,type='primary'):
+        with auth_notification, st.spinner('Sending password reset link'):
+            auth_functions.reset_password(email)
 
-def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-        initial_sidebar_state="collapsed",
-    )
-    Voting = st.expander('Open Working Group Chair Positions')
-    Voting.write('Nominate a candidate')
-    P1628 = Voting.container()
-    P1628.write("Vote Now")
-    P3357 = Voting.container()
-    P3357.write("Vote Now")
-    Attendance = st.expander('Record attendance')
-    AttendanceForm = Attendance.form(key='form_attendance')
-    col1, col2, col3 = AttendanceForm.columns([3, 1, 1])
+    # Authentication success and warning messages
+    if 'auth_success' in st.session_state:
+        auth_notification.success(st.session_state.auth_success)
+        del st.session_state.auth_success
+    elif 'auth_warning' in st.session_state:
+        auth_notification.warning(st.session_state.auth_warning)
+        del st.session_state.auth_warning
 
-    lastname = col1.text_input(
-        'Last Name',
-        key='name',
-    )
-    AttendanceForm.form_submit_button(label="Submit")
-    with st.expander('Sign Up'):
-        Login = st.form('Login', clear_on_submit=True)
-        firstname = Login.text_input('First Name')
-        lastname = Login.text_input('Last Name')
-        email = Login.text_input('email address')
-        password = Login.text_input('password')
-        LoginSubmit = Login.form_submit_button('Join')
-        if LoginSubmit:
-            auth.insert_user(firstname, lastname, email, password)
-    '''
-    with st.expander('User Info'):
-        User = st.form('user')
-        #username = User.text_input('User Name')
-        #UserSubmit = User.form_submit_button('Check')
-        #UserDoc = auth.get_user_doc(username)
-        #AuthUser = auth.get_user(UserDoc)
-        #st.write(auth.get_user_email(AuthUser))
-        with st.form('change email'):
-            newemail = st.text_input('new email')
-            if st.form_submit_button('Submit'):
-                auth.update_user_email(UserDoc, newemail)
-    '''
-    with st.expander('All Users'):
-        Update = st.button('Run')
-        if Update:
-            auth.fetch_all_users()
+## -------------------------------------------------------------------------------------------------
+## Logged in --------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------
+else:
+    # Show user information
+    st.header('User information:')
+    st.write(st.session_state.user_info)
 
-def gsheets():
-    conn = st.connection('gsheets', type=GSheetsConnection)
-    data = conn.read(
-        worksheet='Attendance',
-        ttl=0,
-        )
-    st.dataframe(data)
-    
-def sample():
-    st.write('test sample')
-    
-if __name__ == '__main__':
-    run()
-    #gsheets()
-    #adduser()
-    #showusers()
+    # Sign out
+    st.header('Sign out:')
+    st.button(label='Sign Out',on_click=auth_functions.sign_out,type='primary')
+
+    # Delete Account
+    st.header('Delete account:')
+    password = st.text_input(label='Confirm your password',type='password')
+    st.button(label='Delete Account',on_click=auth_functions.delete_account,args=[password],type='primary')
