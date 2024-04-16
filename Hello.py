@@ -1,60 +1,69 @@
-import streamlit as st # pip install streamlit
-import auth_functions
+import streamlit as st
+import streamlit_authentication as st_auth
 
-#st.write(auth_functions.fetch_all_users())
-
+config = st_auth.openconfig()
+auth = st_auth.authenticate(config)
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 if 'user_info' not in st.session_state:
-    col1,col2,col3 = st.columns([1,2,1])
+    do_you_have_an_account = st.sidebar.selectbox(label='Do you have an account?',options=('Yes','No','I forgot my password','I forgot my username'))
+    if do_you_have_an_account == 'Yes':
+        user, status, username = st_auth.login(auth)
+    elif do_you_have_an_account =='No':
+        try:
+            email, username, user = st_auth.register(auth)
+            if email:
+                st.sidebar.success('User registered successfully, please login')
+                st_auth.saveconfig(config)
+        except Exception as e:
+            st.sidebar.error(e)
+    elif do_you_have_an_account == 'I forgot my password':
+        try:
+            username, email, new_random_password = st_auth.forgotpassword(auth)
+            if username:
+                st.sidebar.success('New password to be sent securely')
+                # The developer should securely transfer the new password to the user.
+                st_auth.saveconfig(config)
+                st.sidebar.write('your new password is ' + new_random_password)
+            elif username == False:
+                st.sidebar.error('Username not found')
+        except Exception as e:
+            st.sidebar.error(e)
+    elif do_you_have_an_account == 'I forgot my username':
+        try:
+            username, email = st_auth.forgotusername(auth)
+            if username:
+                st.sidebar.success('Username to be sent securely')
+                st.sidebar.write('your username is ' + username)
+                # The developer should securely transfer the username to the user.
+            elif username == False:
+                st.sidebar.error('Email not found')
+        except Exception as e:
+            st.sidebar.error(e)
 
-    # Authentication form layout
-    do_you_have_an_account = col2.selectbox(label='Do you have an account?',options=('Yes','No','I forgot my password'))
-    auth_form = col2.form(key='Authentication form',clear_on_submit=False)
-    email = auth_form.text_input(label='Email')
-    password = auth_form.text_input(label='Password',type='password') if do_you_have_an_account in {'Yes','No'} else auth_form.empty()
-    firstname = auth_form.text_input(label='First Name') if do_you_have_an_account == 'No' else auth_form.empty()
-    lastname = auth_form.text_input(label='Last Name') if do_you_have_an_account == 'No' else auth_form.empty()
-    auth_notification = col2.empty()
-
-    # Sign In
-    if do_you_have_an_account == 'Yes' and auth_form.form_submit_button(label='Sign In',use_container_width=True,type='primary'):
-        with auth_notification, st.spinner('Signing in'):
-            auth_functions.sign_in(email,password)
-
-    # Create Account
-    elif do_you_have_an_account == 'No' and auth_form.form_submit_button(label='Create Account',use_container_width=True,type='primary'):
-        with auth_notification, st.spinner('Creating account'):
-            auth_functions.create_account(email,password,firstname,lastname)
-
-    # Password Reset
-    elif do_you_have_an_account == 'I forgot my password' and auth_form.form_submit_button(label='Send Password Reset Email',use_container_width=True,type='primary'):
-        with auth_notification, st.spinner('Sending password reset link'):
-            #auth_functions.reset_password(email)
-            st.success('Password Reset')
-
-    # Authentication success and warning messages
-    if 'auth_success' in st.session_state:
-        auth_notification.success(st.session_state.auth_success)
-        del st.session_state.auth_success
-    elif 'auth_warning' in st.session_state:
-        auth_notification.warning(st.session_state.auth_warning)
-        del st.session_state.auth_warning
-
-## -------------------------------------------------------------------------------------------------
-## Logged in --------------------------------------------------------------------------------------
-## -------------------------------------------------------------------------------------------------
+    if 'authentication_status' in st.session_state:
+        if st.session_state['authentication_status']:
+            st.session_state.user_info = user
+        elif st.session_state['authentication_status'] is False:
+            st.sidebar.error('Username/password is incorrect')
+        elif st.session_state['authentication_status'] is None:
+            st.sidebar.warning('Please enter your username and password')
 else:
+    if st.session_state['authentication_status'] is None:
+        ## Logged out
+        st.session_state.clear()
+        st.rerun()
+    ## ---------------------------------------------------
+    ## Logged in -----------------------------------------
+    ## ---------------------------------------------------
     # Show user information
-    st.header('Hello ' + st.session_state.user_info['first'] +'!')
-
-    # Sign out
-    st.header('Sign out:')
-    st.button(label='Sign Out',on_click=auth_functions.sign_out,type='primary')
-
-    # Delete Account
-    st.header('Delete account:')
-    password = st.text_input(label='Confirm your password',type='password')
-    st.button(label='Delete Account',on_click=auth_functions.delete_account,args=[password],type='primary')
+    st.sidebar.header('Hello ' + st.session_state.user_info +'!')
+    with st.sidebar.expander('Update Profile', expanded=False):
+        st_auth.resetpassword(auth, config)
+        st_auth.updateuser(auth, config)
+    st_auth.logout(auth)
+    #st.write(st_auth.output(config))
+    st.write(f'Welcome, {st.session_state["name"]}\.')
+    st.title('Some content')
 
