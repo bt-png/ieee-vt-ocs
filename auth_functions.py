@@ -34,13 +34,13 @@ def get_account_info(id_token):
 #    raise_detailed_error(request_object)
 #    return request_object.json()
 
-def send_password_reset_email(email):
-    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getOobConfirmationCode?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
-    headers = {"content-type": "application/json; charset=UTF-8"}
-    data = json.dumps({"requestType": "PASSWORD_RESET", "email": email})
-    request_object = requests.post(request_ref, headers=headers, data=data)
-    raise_detailed_error(request_object)
-    return request_object.json()
+#def send_password_reset_email(email):
+    #request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getOobConfirmationCode?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
+    #headers = {"content-type": "application/json; charset=UTF-8"}
+    #data = json.dumps({"requestType": "PASSWORD_RESET", "email": email})
+    #request_object = requests.post(request_ref, headers=headers, data=data)
+    #raise_detailed_error(request_object)
+    #return request_object.json()
 
 #def create_user_with_email_and_password(email, password):
 #    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
@@ -53,11 +53,11 @@ def send_password_reset_email(email):
 def delete_user_account(id_token):
     return db.collection('users').document(id_token).delete()
 
-def raise_detailed_error(request_object):
-    try:
-        request_object.raise_for_status()
-    except requests.exceptions.HTTPError as error:
-        raise requests.exceptions.HTTPError(error, request_object.text)
+#def raise_detailed_error(request_object):
+    #try:
+    #    request_object.raise_for_status()
+    #except requests.exceptions.HTTPError as error:
+    #    raise requests.exceptions.HTTPError(error, request_object.text)
 
 ## -------------------------------------------------------------------------------------------------
 ## Authentication functions ------------------------------------------------------------------------
@@ -104,20 +104,20 @@ def create_account(email:str, password:str, firstname:str, lastname:str) -> None
         st.session_state.auth_warning = 'Error: Please try again later'
 
 
-def reset_password(email:str) -> None:
-    try:
-        send_password_reset_email(email)
-        st.session_state.auth_success = 'Password reset link sent to your email'
+#def reset_password(email:str) -> None:
+    #try:
+    #    send_password_reset_email(email)
+    #    st.session_state.auth_success = 'Password reset link sent to your email'
     
-    except requests.exceptions.HTTPError as error:
-        error_message = json.loads(error.args[1])['error']['message']
-        if error_message in {"MISSING_EMAIL","INVALID_EMAIL","EMAIL_NOT_FOUND"}:
-            st.session_state.auth_warning = 'Error: Use a valid email'
-        else:
-            st.session_state.auth_warning = 'Error: Please try again later'    
+    #except requests.exceptions.HTTPError as error:
+    #    error_message = json.loads(error.args[1])['error']['message']
+    #    if error_message in {"MISSING_EMAIL","INVALID_EMAIL","EMAIL_NOT_FOUND"}:
+    #        st.session_state.auth_warning = 'Error: Use a valid email'
+    #    else:
+    #        st.session_state.auth_warning = 'Error: Please try again later'    
     
-    except Exception:
-        st.session_state.auth_warning = 'Error: Please try again later'
+    #except Exception:
+    #    st.session_state.auth_warning = 'Error: Please try again later'
 
 
 def sign_out() -> None:
