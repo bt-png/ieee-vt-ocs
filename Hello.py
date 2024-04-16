@@ -1,6 +1,8 @@
 import streamlit as st # pip install streamlit
 import auth_functions
 
+#st.write(auth_functions.fetch_all_users())
+
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
@@ -56,3 +58,4 @@ else:
     st.header('Delete account:')
     password = st.text_input(label='Confirm your password',type='password')
     st.button(label='Delete Account',on_click=auth_functions.delete_account,args=[password],type='primary')
+

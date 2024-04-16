@@ -3,6 +3,9 @@ import streamlit as st
 import firebase
 import firebase_admin #pip install firebase
 
+from google.cloud import firestore
+from google.oauth2 import service_account
+
 from firebase_admin import credentials # pip install firebase
 from firebase_admin import auth #pip install firebase
 #from google.oauth2 import service_account
@@ -11,25 +14,25 @@ key_dict = json.loads(st.secrets['Firestorekey'])
 cred = credentials.Certificate(key_dict)
 #firebase_admin.initialize_app(cred) #Run only once to connect
 
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds)
+
 ## -------------------------------------------------------------------------------------------------
 ## Firebase Auth API -------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 
 def sign_in_with_email_and_password(email, password):
-    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
-    headers = {"content-type": "application/json; charset=UTF-8"}
-    data = json.dumps({"email": email, "password": password, "returnSecureToken": True})
-    request_object = requests.post(request_ref, headers=headers, data=data)
-    raise_detailed_error(request_object)
-    return request_object.json()
+    users_ref = db.collection('users')
+    for doc in users_ref.stream():
+        val = doc.to_dict()
+        if val['email'] == email:
+            if val['password'] == password:
+                return doc.id
+            else:
+                return None
 
 def get_account_info(id_token):
-    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
-    headers = {"content-type": "application/json; charset=UTF-8"}
-    data = json.dumps({"idToken": id_token})
-    request_object = requests.post(request_ref, headers=headers, data=data)
-    raise_detailed_error(request_object)
-    return request_object.json()
+    return db.collection('users').document(id_token).get().to_dict()
 
 #def send_email_verification(id_token):
 #    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getOobConfirmationCode?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
@@ -56,12 +59,7 @@ def send_password_reset_email(email):
 #    return request_object.json()
 
 def delete_user_account(id_token):
-    request_ref = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/deleteAccount?key={0}".format(st.secrets['FIREBASE_WEB_API_KEY'])
-    headers = {"content-type": "application/json; charset=UTF-8"}
-    data = json.dumps({"idToken": id_token})
-    request_object = requests.post(request_ref, headers=headers, data=data)
-    raise_detailed_error(request_object)
-    return request_object.json()
+    return db.collection('users').document(id_token).delete()
 
 def raise_detailed_error(request_object):
     try:
@@ -75,31 +73,18 @@ def raise_detailed_error(request_object):
 
 def sign_in(email:str, password:str) -> None:
     try:
-        user = firebase.
-            auth_notification.success('SignedIn')
-            st.write(user.uid)
         # Attempt to sign in with email and password
-        user = sign_in_with_email_and_password(email,password)['idToken']
-
-        # Get account information
-        user_info = get_account_info(id_token)["users"][0]
-
-        # If email is not verified, send verification email and do not sign in
-        if not user_info["emailVerified"]:
-            send_email_verification(id_token)
-            st.session_state.auth_warning = 'Check your email to verify your account'
-
-        # Save user info to session state and rerun
-        else:
-            st.session_state.user_info = user_info
-            st.experimental_rerun()
-
-    except requests.exceptions.HTTPError as error:
-        error_message = json.loads(error.args[1])['error']['message']
-        if error_message in {"INVALID_EMAIL","EMAIL_NOT_FOUND","INVALID_PASSWORD","MISSING_PASSWORD"}:
+        id_token = sign_in_with_email_and_password(email,password)
+        
+        if id_token is None:
             st.session_state.auth_warning = 'Error: Use a valid email and password'
         else:
-            st.session_state.auth_warning = 'Error: Please try again later'
+            # Get account information
+            user_info = get_account_info(id_token)
+
+            # Save user info to session state and rerun
+            st.session_state.user_info = user_info
+            st.rerun()
 
     except Exception as error:
         print(error)
@@ -108,33 +93,22 @@ def sign_in(email:str, password:str) -> None:
 
 def create_account(email:str, password:str, firstname:str, lastname:str) -> None:
     try:
-        # Create account (and save id_token)
-        #id_token = create_user_with_email_and_password(email,password)['idToken']
-        #id_token = auth.create_custom_token(email)
-        user = auth.create_user(
-            email = email, 
-            password = password, 
-            display_name = firstname.title() + lastname.title(),
-            #uid = lastname.lower() + firstname.lower()
-            )
-        # Create account and send email verification
-        #send_email_verification(id_token)
-        auth.generate_email_verification_link(email)
-        st.session_state.auth_success = 'Check your inbox to verify your email'
-    
-    #except requests.exceptions.HTTPError as error:
-    #    error_message = json.loads(error.args[1])['error']['message']
-    #    if error_message == "EMAIL_EXISTS":
-    #        st.session_state.auth_warning = 'Error: Email belongs to existing account'
-    #    elif error_message in {"INVALID_EMAIL","INVALID_PASSWORD","MISSING_PASSWORD","MISSING_EMAIL","WEAK_PASSWORD"}:
-    #        st.session_state.auth_warning = 'Error: Use a valid email and password'
-    #    else:
-    #        st.session_state.auth_warning = 'Error: Please try again later'
+        # Create account
+        username = lastname.lower() + firstname.lower()
+        doc_ref = db.collection('users').document(username)
+        if doc_ref.get().exists:
+            st.session_state.auth_warning = 'Error: User already registered!'
+            exit
+        else:
+            doc_ref.set({
+                'first': firstname.title(),
+                'last': lastname.title(),
+                'email': email,
+                'password': password
+            })
+            sign_in(email, password)
     except Exception as error:
         print(error)
-        #if isinstance(error, 'EmailAlreadyExistsError'):
-        #    st.session_state.auth_warning = 'That email is already registered'
-        #else:
         st.session_state.auth_warning = 'Error: Please try again later'
 
 
@@ -162,16 +136,21 @@ def sign_out() -> None:
 def delete_account(password:str) -> None:
     try:
         # Confirm email and password by signing in (and save id_token)
-        id_token = sign_in_with_email_and_password(st.session_state.user_info['email'],password)['idToken']
+        id_token = sign_in_with_email_and_password(st.session_state.user_info['email'],password)
         
-        # Attempt to delete account
-        delete_user_account(id_token)
-        st.session_state.clear()
-        st.session_state.auth_success = 'You have successfully deleted your account'
-
-    except requests.exceptions.HTTPError as error:
-        error_message = json.loads(error.args[1])['error']['message']
-        print(error_message)
-
+        if id_token is None:
+            st.session_state.auth_warning = 'Error: Use a valid email and password'
+        else:
+            # Attempt to delete account
+            delete_user_account(id_token)
+            st.session_state.clear()
+            st.session_state.auth_success = 'You have successfully deleted your account'
     except Exception as error:
         print(error)
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+def fetch_all_users():
+    users_ref = db.collection('users')
+    for doc in users_ref.stream():
+        st.write(doc.id, doc.to_dict())
+
