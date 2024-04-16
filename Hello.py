@@ -47,8 +47,7 @@ if 'user_info' not in st.session_state:
 ## -------------------------------------------------------------------------------------------------
 else:
     # Show user information
-    st.header('User information:')
-    st.write(st.session_state.user_info)
+    st.header('Hello ' + st.session_state.user_info['first'] +'!')
 
     # Sign out
     st.header('Sign out:')
