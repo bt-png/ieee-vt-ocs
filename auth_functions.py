@@ -1,18 +1,10 @@
 import json
 import streamlit as st
-import firebase
-import firebase_admin #pip install firebase
 
 from google.cloud import firestore
 from google.oauth2 import service_account
 
-from firebase_admin import credentials # pip install firebase
-from firebase_admin import auth #pip install firebase
-#from google.oauth2 import service_account
-
 key_dict = json.loads(st.secrets['Firestorekey'])
-cred = credentials.Certificate(key_dict)
-#firebase_admin.initialize_app(cred) #Run only once to connect
 
 creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds)
