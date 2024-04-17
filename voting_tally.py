@@ -39,7 +39,7 @@ def pull_entry(WG):
     acount=[]
     doc_ref = db.collection(WG)
     for doc in doc_ref.stream():
-        val = doc.to_dict())
+        val = doc.to_dict()
         name.append(val['name'][1])
         count.append(val['count'][1])
     df = pd.DataFrame({'name': name, 'count': count})
