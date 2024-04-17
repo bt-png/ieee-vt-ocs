@@ -21,7 +21,7 @@ def run():
         ')
     col2.caption('Voting will take place at our next comittee meeting.')
     with col2.expander('Nominate a candidate for P1628'):
-        st.caption('Current Nominations')
+        #st.caption('Current Nominations')
         pull_entry('P1628')
         st.write("Submit your nomination")
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
@@ -42,9 +42,9 @@ def pull_entry(WG):
         val = doc.to_dict()
         aname.append(val['name'])
         acount.append(val['count'])
-    df = pd.DataFrame({'name': aname, 'count': acount})
+    df = pd.DataFrame({'Current Nominees': aname, 'count': acount})
     df = df.sort_values(by=['count'], ascending=False)
-    st.dataframe(data=df['name'], hide_index=True)
+    st.dataframe(data=df['Current Nominees'], hide_index=True)
 
 #@st.cache_data
 def submit_entry(name, WG):
