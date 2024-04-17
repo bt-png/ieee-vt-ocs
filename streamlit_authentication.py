@@ -37,7 +37,7 @@ def updateuser(auth,conf):
     if st.session_state["authentication_status"]:
         try:
             fieldval = {'Form name':'Update user details', 'Field':'Select', 'Name':'Name', 'Email':'Email', 'New value':'New value', 'Update':'Update'}
-            if auth.update_user_details(username=st.session_state["username"], field=fieldval):
+            if auth.update_user_details(username=st.session_state["username"], fields=fieldval):
                 st.sidebar.success('Entries updated successfully')
                 saveconfig(conf)
         except Exception as e:
