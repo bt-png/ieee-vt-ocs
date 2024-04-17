@@ -45,7 +45,7 @@ def pull_entry(WG):
         aname.append(val['name'])
         acount.append(val['count'])
     df = pd.DataFrame({'Current Nominees': aname, 'count': acount})
-    df = df.sort_values(by=['count'], ascending=False)
+    df = df.sort_values(by=['Current Nominees'], ascending=False)
     st.dataframe(data=df['Current Nominees'], hide_index=True)
 
 #@st.cache_data
