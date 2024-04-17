@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit_authentication as st_auth
+import voting_tally as vt
 
 config = st_auth.openconfig()
 auth = st_auth.authenticate(config)
@@ -65,5 +66,5 @@ else:
     st_auth.logout(auth)
     #st.write(st_auth.output(config))
     st.write(f'Welcome, {st.session_state["name"]}\.')
-    st.title('Some content')
-
+    #st.title('Some content')
+    vt.run()

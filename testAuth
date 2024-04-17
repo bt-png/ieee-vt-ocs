@@ -1,5 +1,5 @@
 import streamlit as st
-import firebase_auth_functions
+import firebase_auth_functions as auth_functions
 
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
