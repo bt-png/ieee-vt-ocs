@@ -51,7 +51,7 @@ def submit_entry(name, WG):
         # Create account
         doc_ref = db.collection(WG).document(name)
         val = doc_ref.get()
-        if val.exists:
+        if val.exists():
             val = val.to_dict()
             #print(val)
             val['nominators'].append(st.session_state['name'])
