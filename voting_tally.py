@@ -45,13 +45,13 @@ def pull_entry(WG):
     df = pd.DataFrame({'name': aname, 'count': acount})
     st.dataframe(df)
 
-@st.cache_data
+#@st.cache_data
 def submit_entry(name, WG):
     try:
         # Create account
         doc_ref = db.collection(WG).document(name)
         val = doc_ref.get()
-        if val.exists():
+        if val.exist:
             val = val.to_dict()
             #print(val)
             val['nominators'].append(st.session_state['name'])
