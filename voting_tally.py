@@ -31,6 +31,7 @@ def run():
                 pull_entry('P1628')
                 st.warning('This form will be open until July 1st if you want to change your nomination.') 
     with col2.expander('Nominate a candidate for P3357'):
+        st.caption('Recommended Practice for Grounding Overhead Contact System (OCS) Poles and Supports on Light Rail Transit Systems')
         st.write("Submit your nomination")
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
             st.text_input(label='Full Name',key='P3357_name')
