@@ -21,7 +21,7 @@ def run():
         ')
     col2.caption('Voting will take place at our next comittee meeting.')
     with col2.expander('Nominate a candidate for P1628'):
-        #st.caption('Current Nominations')
+        st.caption('Recommended Practice for Maintenance of Direct Current (DC) Overhead Contact Systems for Transit Systems')
         st.write("Submit your nomination")
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
             st.text_input(label='Full Name',key='P1628_name')
