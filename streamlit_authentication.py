@@ -36,7 +36,8 @@ def resetpassword(auth, conf):
 def updateuser(auth,conf):
     if st.session_state["authentication_status"]:
         try:
-            if auth.update_user_details(st.session_state["username"]):
+            fieldval = {'Form name':'Update user details', 'Field':'Select', 'Name':'Name', 'Email':'Email', 'New value':'New value', 'Update':'Update'}
+            if auth.update_user_details(username=st.session_state["username"], field=fieldval):
                 st.sidebar.success('Entries updated successfully')
                 saveconfig(conf)
         except Exception as e:
