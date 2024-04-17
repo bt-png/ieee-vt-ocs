@@ -44,7 +44,7 @@ def pull_entry(WG):
         acount.append(val['count'])
     df = pd.DataFrame({'name': aname, 'count': acount})
     df = df.sort_values(by=['count'], ascending=False)
-    st.dataframe(df['name'])
+    st.dataframe(data=df['name'], hide_index=True)
 
 #@st.cache_data
 def submit_entry(name, WG):
