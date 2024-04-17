@@ -17,7 +17,7 @@ if 'user_info' not in st.session_state:
             if email:
                 st.sidebar.success('User registered successfully, please login')
                 st_auth.saveconfig(config)
-                st.sessionstate.starthere='Sign in'
+                st.session_state.starthere='Sign in'
                 st.rerun()
         except Exception as e:
             st.sidebar.error(e)
