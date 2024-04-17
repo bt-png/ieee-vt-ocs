@@ -15,9 +15,9 @@ def run():
     col1,col2,col3 = st.columns([1,4,1])
     col2.subheader('Calling Nominations')
     col2.write('\
-        We have two (2) openings for the position of Working Group Chair \
-        and are looking for nominations!!.\
-        Use the below form to submit your nomination.\
+        We have openings for the position of Working Group Chair \
+        for two (2) of our committees, and are looking for nominations!\
+        Each committee has a form below. Please use them to cast your nomination.\
         ')
     col2.caption('Voting will take place at our next comittee meeting.')
     with col2.expander('Nominate a candidate for P1628'):
@@ -45,7 +45,7 @@ def pull_entry(WG):
         aname.append(val['name'])
         acount.append(val['count'])
     df = pd.DataFrame({'Current Nominees': aname, 'count': acount})
-    df = df.sort_values(by=['Current Nominees'], ascending=False)
+    df = df.sort_values(by=['Current Nominees'], ascending=True)
     st.dataframe(data=df['Current Nominees'], hide_index=True)
 
 #@st.cache_data
