@@ -43,6 +43,8 @@ def pull_entry(WG):
         aname.append(val['name'])
         acount.append(val['count'])
     df = pd.DataFrame({'name': aname, 'count': acount})
+    st.dataframe(df)
+
 @st.cache_data
 def submit_entry(name, WG):
     try:
