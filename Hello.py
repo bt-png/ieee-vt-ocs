@@ -8,15 +8,17 @@ auth = st_auth.authenticate(config)
 ## Not logged in -----------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 if 'user_info' not in st.session_state:
-    do_you_have_an_account = st.sidebar.selectbox(label='Do you have an account?',options=('Yes','No','I forgot my password','I forgot my username'))
-    if do_you_have_an_account == 'Yes':
+    do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='starthere')
+    if do_you_have_an_account == 'Sign in':
         user, status, username = st_auth.login(auth)
-    elif do_you_have_an_account =='No':
+    elif do_you_have_an_account =='Sign up':
         try:
             email, username, user = st_auth.register(auth)
             if email:
                 st.sidebar.success('User registered successfully, please login')
                 st_auth.saveconfig(config)
+                st.sessionstate.starthere='Sign in'
+                st.rerun()
         except Exception as e:
             st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
