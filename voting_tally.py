@@ -43,7 +43,7 @@ def pull_entry(WG):
         aname.append(val['name'])
         acount.append(val['count'])
     df = pd.DataFrame({'name': aname, 'count': acount})
-    df.sort_values(by=['count'])
+    df.sort_values(by=['count'], ascending=False)
     st.dataframe(df['name'])
 
 #@st.cache_data
