@@ -40,8 +40,8 @@ def pull_entry(WG):
     doc_ref = db.collection(WG)
     for doc in doc_ref.stream():
         val = doc.to_dict()
-        aname.append(val['name'][1])
-        acount.append(val['count'][1])
+        aname.append(val['name'])
+        acount.append(val['count'])
     df = pd.DataFrame({'name': aname, 'count': acount})
 @st.cache_data
 def submit_entry(name, WG):
