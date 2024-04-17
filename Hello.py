@@ -2,7 +2,9 @@ import streamlit as st
 import streamlit_authentication as st_auth
 import voting_tally as vt
 
-config = st_auth.openconfig()
+#config = st_auth.openconfig()
+config = st_auth.openconfig_firebase()
+#st_auth.saveconfig_firebase(config)
 auth = st_auth.authenticate(config)
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
@@ -16,8 +18,9 @@ if 'user_info' not in st.session_state:
             email, username, user = st_auth.register(auth)
             if email:
                 st.sidebar.success('User registered successfully, please login')
-                st_auth.saveconfig(config)
-                st.session_state.starthere='Sign in'
+                #st_auth.saveconfig(config)
+                st_auth.saveconfig_firebase(config)
+                #st.session_state.starthere='Sign in'
                 st.rerun()
         except Exception as e:
             st.sidebar.error(e)
@@ -27,7 +30,8 @@ if 'user_info' not in st.session_state:
             if username:
                 st.sidebar.success('New password to be sent securely')
                 # The developer should securely transfer the new password to the user.
-                st_auth.saveconfig(config)
+                #st_auth.saveconfig(config)
+                st_auth.saveconfig_firebase(config)
                 st.sidebar.write('your new password is ' + new_random_password)
             elif username == False:
                 st.sidebar.error('Username not found')
