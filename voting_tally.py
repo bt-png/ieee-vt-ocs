@@ -33,7 +33,7 @@ def run():
         st.write("P3357 - ")
         st.caption('Current Nominations')
 
-@st.cache_data
+#@st.cache_data
 def pull_entry(WG):
     df = pd.DataFrame({'name': [], 'count': []})
     doc_ref = db.collection(WG)
