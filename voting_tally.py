@@ -13,7 +13,7 @@ db = firestore.Client(credentials=creds)
 
 def run():
     col1,col2,col3 = st.columns([1,4,1])
-    col2.subheader('Calling Nominations')
+    col2.subheader('Call for Nominations')
     col2.write('\
         We have openings for the position of Working Group Chair \
         for two (2) of our committees, and are looking for nominations!\
