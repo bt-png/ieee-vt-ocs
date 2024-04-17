@@ -22,13 +22,15 @@ def run():
     col2.caption('Voting will take place at our next comittee meeting.')
     with col2.expander('Nominate a candidate for P1628'):
         #st.caption('Current Nominations')
-        pull_entry('P1628')
+        
         st.write("Submit your nomination")
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
             st.text_input(label='Full Name',key='P1628_name')
             if st.form_submit_button(label='Submit',use_container_width=True,type='primary'):
                 submit_entry(st.session_state.P1628_name, 'P1628')
                 st.caption(f"Your nomination for '{st.session_state.P1628_name}' has been entered")
+                pull_entry('P1628')
+                st.warning('This form will be open until July 1st if you want to change your nomination.') 
     with col2.expander('Nominate a candidate for P3357'):
         st.write("P3357 - ")
         st.caption('Current Nominations')
