@@ -91,11 +91,11 @@ else:
     #st.title('Some content')
     
     st.markdown('''---''')
-    col1,col2,col3 = st.columns([1,4,1])
+    col1,col2,col3 = st.columns([1,6,1])
     with col2:
         vt.run()
     st.markdown('''---''')
-    col1,col2,col3 = st.columns([1,4,1])
+    col1,col2,col3 = st.columns([1,6,1])
     with col2:
         st_cal.run()
 st.markdown('''---''')
