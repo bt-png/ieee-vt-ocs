@@ -9,7 +9,8 @@ import board
 
 st.set_page_config(
         page_title='IEEE VT OCS Standards Committee',
-        page_icon='🚊'
+        page_icon='🚊',
+        layout='wide'
     )
 
 #def testfun():
