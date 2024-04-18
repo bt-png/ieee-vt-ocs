@@ -44,6 +44,9 @@ def register(auth, conf):
         if email:
             st.sidebar.success('User created successfully')
             firestore.saveconfig(conf)
+            st.session_state['name'] = user
+            st.session_state['authentication_status' = True
+            st.session_state['username'] = username
         return email, username, user
     except Exception as e:
         st.sidebar.error(e)
