@@ -48,6 +48,7 @@ def register(auth, conf):
             st.session_state['authentication_status'] = True
             st.session_state['username'] = username
             st.session_state['user_info'] = user
+            st.rerun()
         return email, username, user
     except Exception as e:
         st.sidebar.error(e)
