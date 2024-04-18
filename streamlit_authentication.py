@@ -39,7 +39,11 @@ def updateuser(auth,conf):
             st.sidebar.error(e)
 
 def register(auth):
-    return auth.register_user(location='sidebar', pre_authorization=False)
+    email, username, user = auth.register_user(location='sidebar', pre_authorization=False)
+    if email:
+        st.sidebar.success('User registered successfully, please login')
+        firestore.saveconfig(config)
+    return email, username, user
 
 def forgotpassword(auth):
     return auth.forgot_password(location='sidebar')
