@@ -32,7 +32,7 @@ if 'user_info' not in st.session_state:
         try:
             email, username, user = st_auth.register(auth, config)
             if email:
-                firestore.saveconfig(conf)
+                firestore.saveconfig(config)
                 st.sidebar.success('User registered successfully, please login')
                 #firestore.openconfig.clear()
         except Exception as e:
