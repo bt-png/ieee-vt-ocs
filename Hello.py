@@ -4,8 +4,7 @@ import voting_tally as vt
 import st_cal
 import workinggroups as wg
 import board
-
-#import st_cal
+import firestore
 
 st.set_page_config(
         page_title='IEEE VT OCS Standards Committee',
@@ -13,13 +12,9 @@ st.set_page_config(
         layout='wide'
     )
 
-#def testfun():
-    #do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='altone')
-
-#config = st_auth.openconfig()
-config = st_auth.openconfig_firebase()
-#st_auth.saveconfig_firebase(config)
+config = firestore.openconfig()
 auth = st_auth.authenticate(config)
+
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
@@ -38,8 +33,7 @@ if 'user_info' not in st.session_state:
             email, username, user = st_auth.register(auth)
             if email:
                 st.sidebar.success('User registered successfully, please login')
-                #st_auth.saveconfig(config)
-                st_auth.saveconfig_firebase(config)
+                firestore.saveconfig(config)
         except Exception as e:
             st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
@@ -48,8 +42,7 @@ if 'user_info' not in st.session_state:
             if username:
                 st.sidebar.success('New password to be sent securely')
                 # The developer should securely transfer the new password to the user.
-                #st_auth.saveconfig(config)
-                st_auth.saveconfig_firebase(config)
+                firestore.saveconfig(config)
                 st.sidebar.write('your new password is ' + new_random_password)
             elif username == False:
                 st.sidebar.error('Username not found')
