@@ -38,11 +38,10 @@ def updateuser(auth,conf):
         except Exception as e:
             st.sidebar.error(e)
 
-def register(auth):
+def register(auth, conf):
     email, username, user = auth.register_user(location='sidebar', pre_authorization=False)
     if email:
-        st.sidebar.success('User registered successfully, please login')
-        firestore.saveconfig(config)
+        firestore.saveconfig(conf)
     return email, username, user
 
 def forgotpassword(auth):
