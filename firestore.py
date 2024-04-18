@@ -36,7 +36,7 @@ def saveconfig(conf):
         st.session_state.auth_warning = 'Error: Please try again later'
 
 #---------nominations----------------
-@st.cache_data
+#@st.cache_data
 def get_existing_nomination(WG):
     try:
         doc_ref = db.collection(WG).document(st.session_state['name'])
