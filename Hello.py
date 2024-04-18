@@ -30,7 +30,7 @@ if 'user_info' not in st.session_state:
         user, status, username = st_auth.login(auth)
     elif do_you_have_an_account =='Sign up':
         try:
-            email, username, user = st_auth.register(auth)
+            email, username, user = st_auth.register(auth, config)
             if email:
                 st.sidebar.success('User registered successfully, please login')
         except Exception as e:
