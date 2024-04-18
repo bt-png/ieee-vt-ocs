@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import workinggroups
 
 ### Firestore Authentication
 import json
@@ -21,13 +22,15 @@ def run():
         ')
     st.caption('Voting will take place at our next comittee meeting.')
     with st.expander('Nominate a candidate for P1628'):
-        st.caption('Recommended Practice for Maintenance of Direct Current (DC) Overhead Contact Systems for Transit Systems')
-        #st.write("Submit your nomination")
+        title = workinggroups.PARS_Title('P1628')
+        scope = workinggroups.PARS_Scope('P1628')
+        st.caption('Title: ' + title)
+        st.caption('Scope: ' + scope)
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
             existing_vote = pull_existing_vote('P1628')
-            st.text_input(label='Nominee Full Name', value=existing_vote, key='P1628_name')
+            st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
-            if st.form_submit_button(label=vote_label,use_container_width=True,type='primary'):
+            if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P1628_name == st.session_state['name']:
                     st.error('You cannot nominate yourself!')
                 else:
@@ -40,13 +43,15 @@ def run():
                     st.warning('This form will be open until July 1st if you want to change your nomination.')
                 
     with st.expander('Nominate a candidate for P3357'):
-        st.caption('Recommended Practice for Grounding Overhead Contact System (OCS) Poles and Supports on Light Rail Transit Systems')
-        #st.write("Submit your nomination")
+        title = workinggroups.PARS_Title('P3357')
+        scope = workinggroups.PARS_Scope('P3357')
+        st.caption('Title: ' + title)
+        st.caption('Scope: ' + scope)
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
             existing_vote = pull_existing_vote('P3357')
-            st.text_input(label='Nominee Full Name', value=existing_vote, key='P3357_name')
+            st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P3357_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
-            if st.form_submit_button(label=vote_label,use_container_width=True,type='primary'):
+            if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P3357_name == st.session_state['name']:
                     st.error('You cannot nominate yourself!')
                 else:
@@ -88,7 +93,8 @@ def pull_entry(WG):
     df = df.sort_values(by=['Current Nominees'], ascending=True)
     st.dataframe(data=df['Current Nominees'],
                  hide_index=True,
-                 height = ((min(len(df.index),5) + 1) * 35 + 3))
+                 height = ((min(len(df.index),5) + 1) * 35 + 3),
+                 use_container_width=True)
 
 #@st.cache_data
 def submit_entry(name, WG):
