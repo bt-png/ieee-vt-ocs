@@ -11,7 +11,7 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds)
 
 #---------login----------------
-@st.cache_data
+#@st.cache_data
 def openconfig():
     doc_ref = db.collection('yaml').document('users')
     doc = doc_ref.get()
