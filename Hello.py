@@ -1,6 +1,18 @@
 import streamlit as st
 import streamlit_authentication as st_auth
 import voting_tally as vt
+import st_cal
+import board
+
+#import st_cal
+
+st.set_page_config(
+        page_title='IEEE VT OCS Standards Committee',
+        page_icon='🚊'
+    )
+
+#def testfun():
+    #do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='altone')
 
 #config = st_auth.openconfig()
 config = st_auth.openconfig_firebase()
@@ -9,8 +21,14 @@ auth = st_auth.authenticate(config)
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
+
 if 'user_info' not in st.session_state:
-    do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='starthere')
+    col1,col2,col3 = st.columns([1,6,1])
+    col2.header('IEEE VT OCS Standards Committee')
+    col2.image(image='IMG_0079.jpg')
+    #col2.button('test', on_click=testfun())
+    do_you_have_an_account = st.empty()
+    do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='mainone')
     if do_you_have_an_account == 'Sign in':
         user, status, username = st_auth.login(auth)
     elif do_you_have_an_account =='Sign up':
@@ -20,8 +38,6 @@ if 'user_info' not in st.session_state:
                 st.sidebar.success('User registered successfully, please login')
                 #st_auth.saveconfig(config)
                 st_auth.saveconfig_firebase(config)
-                #st.session_state.starthere='Sign in'
-                st.rerun()
         except Exception as e:
             st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
@@ -73,4 +89,14 @@ else:
     #st.write(st_auth.output(config))
     st.write(f'Welcome, {st.session_state["name"]}\.')
     #st.title('Some content')
-    vt.run()
+    
+    st.markdown('''---''')
+    col1,col2,col3 = st.columns([1,4,1])
+    with col2:
+        vt.run()
+    st.markdown('''---''')
+    col1,col2,col3 = st.columns([1,4,1])
+    with col2:
+        st_cal.run()
+st.markdown('''---''')
+board.run()

@@ -12,15 +12,14 @@ db = firestore.Client(credentials=creds)
 ##-End Firestore
 
 def run():
-    col1,col2,col3 = st.columns([1,4,1])
-    col2.subheader('Call for Nominations')
-    col2.write('\
+    st.subheader('Call for Nominations')
+    st.write('\
         We have openings for the position of Working Group Chair \
         for two (2) of our committees, and are looking for nominations!\
         Each committee has a form below. Please use them to cast your nomination.\
         ')
-    col2.caption('Voting will take place at our next comittee meeting.')
-    with col2.expander('Nominate a candidate for P1628'):
+    st.caption('Voting will take place at our next comittee meeting.')
+    with st.expander('Nominate a candidate for P1628'):
         st.caption('Recommended Practice for Maintenance of Direct Current (DC) Overhead Contact Systems for Transit Systems')
         #st.write("Submit your nomination")
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
@@ -30,7 +29,7 @@ def run():
                 st.caption(f"Your nomination for '{st.session_state.P1628_name}' has been entered")
                 pull_entry('P1628')
                 st.warning('This form will be open until July 1st if you want to change your nomination.') 
-    with col2.expander('Nominate a candidate for P3357'):
+    with st.expander('Nominate a candidate for P3357'):
         st.caption('Recommended Practice for Grounding Overhead Contact System (OCS) Poles and Supports on Light Rail Transit Systems')
         #st.write("Submit your nomination")
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
