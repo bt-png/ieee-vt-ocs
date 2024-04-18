@@ -13,7 +13,8 @@ def authenticate(config):
     return authenticator
 
 def login(auth):
-    return auth.login(location='sidebar', max_login_attempts=5)
+    user, status, username = auth.login(location='sidebar', max_login_attempts=5)
+    return user, status, username
 
 def logout(auth):
     return auth.logout(location='sidebar')
