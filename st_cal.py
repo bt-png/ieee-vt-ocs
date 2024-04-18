@@ -29,14 +29,19 @@ def run():
 
 #@st.cache_data
 def pull_entry():
-    val=[]
+    df = pd.DataFrame({
+        'number': [],
+        'location': [],
+        'date': []
+    })
     doc_ref = db.collection('meetings')
     for doc in doc_ref.stream():
         items = doc.to_dict()
-        items['start'] = dateonly(items['start'])
-        items['end'] = dateonly(items['end'])
-        val.append(items)
-    st.dataframe(val, hide_index=True, column_order=('number', 'location', 'mtype', 'start'))
+        df.loc[len(df.index)] = [
+            items['number'], 
+            items['location'],
+            dateonly(items['start'])]
+    st.dataframe(df.tail(3), hide_index=True)
 
 def dateonly(datetimeobject):
     return '%s/%s/%s' % (datetimeobject.month, datetimeobject.day, datetimeobject.year)

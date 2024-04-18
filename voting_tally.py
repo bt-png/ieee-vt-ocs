@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 ### Firestore Authentication
 import json
@@ -23,56 +24,87 @@ def run():
         st.caption('Recommended Practice for Maintenance of Direct Current (DC) Overhead Contact Systems for Transit Systems')
         #st.write("Submit your nomination")
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
-            st.text_input(label='Nominee Full Name',key='P1628_name')
-            if st.form_submit_button(label='Submit',use_container_width=True,type='primary'):
-                submit_entry(st.session_state.P1628_name, 'P1628')
-                st.caption(f"Your nomination for '{st.session_state.P1628_name}' has been entered")
-                pull_entry('P1628')
-                st.warning('This form will be open until July 1st if you want to change your nomination.') 
+            existing_vote = pull_existing_vote('P1628')
+            st.text_input(label='Nominee Full Name', value=existing_vote, key='P1628_name')
+            vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
+            if st.form_submit_button(label=vote_label,use_container_width=True,type='primary'):
+                if st.session_state.P1628_name == st.session_state['name']:
+                    st.error('You cannot nominate yourself!')
+                else:
+                    submit_entry(st.session_state.P1628_name, 'P1628')
+                    if existing_vote == '':
+                        st.caption(f"Your nomination for '{st.session_state.P1628_name}' has been entered")
+                    else:
+                        st.caption(f"Your nomination has been revised, '{st.session_state.P1628_name}' has been entered")
+                    pull_entry('P1628')
+                    st.warning('This form will be open until July 1st if you want to change your nomination.')
+                
     with st.expander('Nominate a candidate for P3357'):
         st.caption('Recommended Practice for Grounding Overhead Contact System (OCS) Poles and Supports on Light Rail Transit Systems')
         #st.write("Submit your nomination")
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
-            st.text_input(label='Nominee Full Name',key='P3357_name')
-            if st.form_submit_button(label='Submit',use_container_width=True,type='primary'):
-                submit_entry(st.session_state.P3357_name, 'P3357')
-                st.caption(f"Your nomination for '{st.session_state.P3357_name}' has been entered")
-                pull_entry('P3357')
-                st.warning('This form will be open until July 1st if you want to change your nomination.')
+            existing_vote = pull_existing_vote('P3357')
+            st.text_input(label='Nominee Full Name', value=existing_vote, key='P3357_name')
+            vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
+            if st.form_submit_button(label=vote_label,use_container_width=True,type='primary'):
+                if st.session_state.P3357_name == st.session_state['name']:
+                    st.error('You cannot nominate yourself!')
+                else:
+                    submit_entry(st.session_state.P3357_name, 'P3357')
+                    if existing_vote == '':
+                        st.caption(f"Your nomination for '{st.session_state.P3357_name}' has been entered")
+                    else:
+                        st.caption(f"Your nomination has been revised, '{st.session_state.P3357_name}' has been entered")
+                    pull_entry('P3357')
+                    st.warning('This form will be open until July 1st if you want to change your nomination.')
+
+def pull_existing_vote(WG):
+    try:
+        doc_ref = db.collection(WG).document(st.session_state['name'])
+        doc = doc_ref.get()
+        if doc.exists:
+            return doc.to_dict()['nominee']
+        return ''
+    except Exception as error:
+        print(error)
+        st.session_state.auth_warning = 'Error: Please try again later'
 
 #@st.cache_data
 def pull_entry(WG):
-    aname=[]
-    acount=[]
+    df = pd.DataFrame({
+        'Current Nominees': [],
+        'count': []
+    })
     doc_ref = db.collection(WG)
     for doc in doc_ref.stream():
         val = doc.to_dict()
-        aname.append(val['name'])
-        acount.append(val['count'])
-    df = pd.DataFrame({'Current Nominees': aname, 'count': acount})
+        if df.empty:
+            df.loc[len(df.index)] = [val['nominee'], 0]
+        else:
+            if val['nominee'] in df['Current Nominees'].values:
+                df.loc[df['Current Nominees'] == val['nominee'], 'count'] += 1
+            else:
+                df.loc[len(df.index)] = [val['nominee'], 0]
     df = df.sort_values(by=['Current Nominees'], ascending=True)
     st.dataframe(data=df['Current Nominees'], hide_index=True)
 
 #@st.cache_data
 def submit_entry(name, WG):
     try:
-        # Create account
-        doc_ref = db.collection(WG).document(name)
+        doc_ref = db.collection(WG).document(st.session_state['name'])
         doc = doc_ref.get()
         if doc.exists:
             val = doc.to_dict()
-            #print(val)
-            val['nominators'].append(st.session_state['name'])
-            val['count'] += 1
+            val['nominee'] = name
+            val['date'] = datetime.now()
             doc_ref.set(val)
-            #print(val)
         else:
             doc_ref.set({
-                'name': name.title(),
+                'nominee': name.title(),
                 'position': 'WG Chair Nomination',
                 'workinggroup': WG,
-                'count': 1,
-                'nominators': [st.session_state['name']]
+                'nominator': st.session_state['name'],
+                'date': datetime.now()
             })
     except Exception as error:
         print(error)
