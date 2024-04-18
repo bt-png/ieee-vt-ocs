@@ -30,6 +30,8 @@ def run():
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P1628_name == st.session_state['name']:
                     st.error('You cannot nominate yourself!')
+                elif st.session_state.P1628_name == None:
+                    st.warning('Please type a nominee...')
                 else:
                     firestore.submit_nomination(st.session_state.P1628_name, 'P1628')
                     if existing_vote == '':
@@ -57,6 +59,8 @@ def run():
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P3357_name == st.session_state['name']:
                     st.error('You cannot nominate yourself!')
+                elif st.session_state.P3357_name == None:
+                    st.warning('Please type a nominee...')
                 else:
                     firestore.submit_nomination(st.session_state.P3357_name, 'P3357')
                     if existing_vote == '':
