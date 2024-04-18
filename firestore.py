@@ -13,24 +13,15 @@ db = firestore.Client(credentials=creds)
 #---------login----------------
 #@st.cache_data
 def openconfig():
-    doc_ref = db.collection('yaml').document('users')
+    doc_ref = db.collection('roster').document('login')
     doc = doc_ref.get()
-    val = doc.to_dict()
-    conf = val['yaml']
+    conf = doc.to_dict()
     return conf
 
 def saveconfig(conf):
     try:
-        doc_ref = db.collection('yaml').document('users')
-        doc = doc_ref.get()
-        if doc.exists:
-            val = doc.to_dict()
-            val['yaml'] = conf
-            doc_ref.set(val)
-        else:
-            doc_ref.set({
-                'yaml': conf
-            })
+        doc_ref = db.collection('roster').document('login')
+        doc_ref.set(conf)
     except Exception as error:
         print(error)
         st.session_state.auth_warning = 'Error: Please try again later'
@@ -48,7 +39,7 @@ def get_existing_nomination(WG):
         print(error)
         st.session_state.auth_warning = 'Error: Please try again later'
 
-@st.cache_data
+#@st.cache_data
 def get_nominations(df, WG):
     try:
         doc_ref = db.collection(WG)
@@ -86,3 +77,51 @@ def submit_nomination(name, WG):
     except Exception as error:
         print(error)
         st.session_state.auth_warning = 'Error: Please try again later'
+
+#---------schedule----------------
+@st.cache_data
+def get_schedule(df):
+    doc_ref = db.collection('meetings')
+    for doc in doc_ref.stream():
+        items = doc.to_dict()
+        df.loc[len(df.index)] = [
+            items['number'], 
+            items['location'],
+            items['type'],
+            items['start'],
+            items['end']
+        ]
+    return df
+
+def submit_record(number, location, mtype, start, end):
+    try:
+        doc_ref = db.collection('meetings').document(str(number))
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            val['number'] = number
+            val['location'] = location
+            val['type'] = mtype
+            val['start'] = start
+            val['end'] = end
+            doc_ref.set(val)
+        else:
+            doc_ref.set({
+                'number': number,
+                'location': location,
+                'type': mtype,
+                'start': start,
+                'end': end,
+            })
+    except Exception as error:
+        print(error)
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+#---------roster----------------
+@st.cache_data
+def get_roster():
+    doc_ref = db.collection('roster').document('contactlist')
+    doc = doc_ref.get()
+    if doc.exists:
+        val = doc.to_dict()
+        return val

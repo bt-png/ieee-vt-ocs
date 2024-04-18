@@ -1,19 +1,20 @@
 import streamlit as st
-import streamlit_authentication as st_auth
-import voting_tally as vt
-import st_cal
-import workinggroups as wg
-import board
-import firestore
-
 st.set_page_config(
         page_title='IEEE VT OCS Standards Committee',
         page_icon='🚊',
         layout='wide'
     )
 
+import streamlit_authentication as st_auth
+import firestore
 config = firestore.openconfig()
 auth = st_auth.authenticate(config)
+
+import voting_tally as vt
+import st_cal
+import workinggroups as wg
+import board
+
 
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------

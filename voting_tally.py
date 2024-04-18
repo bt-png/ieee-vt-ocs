@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import workinggroups
 import firestore
+import roster
 
 def run():
     st.subheader('Call for Nominations')
@@ -18,7 +19,13 @@ def run():
         st.caption('Scope: ' + scope)
         with st.form(key='Nomination form (P1628)',clear_on_submit=False):
             existing_vote = firestore.get_existing_nomination('P1628')
-            st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
+            #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
+            st.selectbox(
+                label = 'WG Chair Nominee Full Name',
+                options = roster.names(),
+                index=None,
+                placeholder= "Select nominee..." if existing_vote == '' else existing_vote,
+                key='P1628_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P1628_name == st.session_state['name']:
@@ -39,7 +46,13 @@ def run():
         st.caption('Scope: ' + scope)
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
             existing_vote = firestore.get_existing_nomination('P3357')
-            st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P3357_name')
+            #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P3357_name')
+            st.selectbox(
+                label = 'WG Chair Nominee Full Name',
+                options = roster.names(),
+                index=None,
+                placeholder= "Select nominee..." if existing_vote == '' else existing_vote,
+                key='P3357_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
                 if st.session_state.P3357_name == st.session_state['name']:
