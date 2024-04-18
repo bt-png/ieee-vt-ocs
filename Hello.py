@@ -33,7 +33,7 @@ if 'user_info' not in st.session_state:
             email, username, user = st_auth.register(auth, config)
             if email:
                 st.sidebar.success('User registered successfully, please login')
-                firestore.openconfig.clear()
+                #firestore.openconfig.clear()
         except Exception as e:
             st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
