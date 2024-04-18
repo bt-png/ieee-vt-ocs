@@ -47,6 +47,7 @@ def register(auth, conf):
             st.session_state['name'] = user
             st.session_state['authentication_status'] = True
             st.session_state['username'] = username
+            st.session_state['user_info'] = user
         return email, username, user
     except Exception as e:
         st.sidebar.error(e)
