@@ -12,27 +12,28 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds)
 ##-End Firestore
 
-def run():
-    st.header('Committee Meetings')
-
 import streamlit as st
 import pandas as pd
 
 def run():
-    st.header('Committee Meetings')
-    pull_entry()
+    st.subheader('Upcoming Committee Meeting')
+    show_upcoming()
+    st.subheader('Recent Committee Meetings')
+    show_recent()
     #if st.session_state["username"] =='btharp05':
     #    postnew = st.button('post')
     #    if postnew:
     #        post_newmeeting()
     #        print('posted')
 
-#@st.cache_data
-def pull_entry():
+@st.cache_data
+def schedule():
     df = pd.DataFrame({
         'number': [],
         'location': [],
-        'date': []
+        'type': [],
+        'start': [],
+        'end': []
     })
     doc_ref = db.collection('meetings')
     for doc in doc_ref.stream():
@@ -40,8 +41,45 @@ def pull_entry():
         df.loc[len(df.index)] = [
             items['number'], 
             items['location'],
-            dateonly(items['start'])]
-    st.dataframe(df.tail(3), hide_index=True)
+            items['type'],
+            items['start'],
+            items['end']
+        ]
+    return df
+
+def show_upcoming():
+    df = schedule()
+    df['time'] = df['start']
+    st.dataframe(
+        data=df.tail(1), 
+        hide_index=True, 
+        column_order=['number', 'location', 'type', 'start'],
+        column_config={
+            'start': st.column_config.DatetimeColumn(
+                label='date',
+                format='MMM D, YYYY'
+            ),
+        }
+        )
+    #'time': st.column_config.TimeColumn(
+    #            label='start',
+    #            format='hh:mm a z'
+    #        )
+
+def show_recent():
+    df = schedule()
+    df.drop(df.tail(1).index, inplace=True)
+    st.dataframe(
+        data=df.tail(3), 
+        hide_index=True, 
+        column_order=['number', 'location', 'start'],
+        column_config={
+            'start': st.column_config.DateColumn(
+                label='start date',
+                format='MMM D, YYYY'
+            )
+        }
+        )
 
 def dateonly(datetimeobject):
     return '%s/%s/%s' % (datetimeobject.month, datetimeobject.day, datetimeobject.year)

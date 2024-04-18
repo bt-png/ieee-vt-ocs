@@ -86,7 +86,9 @@ def pull_entry(WG):
             else:
                 df.loc[len(df.index)] = [val['nominee'], 0]
     df = df.sort_values(by=['Current Nominees'], ascending=True)
-    st.dataframe(data=df['Current Nominees'], hide_index=True)
+    st.dataframe(data=df['Current Nominees'],
+                 hide_index=True,
+                 height = ((min(len(df.index),5) + 1) * 35 + 3))
 
 #@st.cache_data
 def submit_entry(name, WG):

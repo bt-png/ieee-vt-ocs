@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit_authentication as st_auth
 import voting_tally as vt
 import st_cal
+import workinggroups as wg
 import board
 
 #import st_cal
@@ -98,5 +99,9 @@ else:
     col1,col2,col3 = st.columns([1,6,1])
     with col2:
         st_cal.run()
+    st.markdown('''---''')
+    col1,col2,col3 = st.columns([1,6,1])
+    with col2:
+        wg.run()
 st.markdown('''---''')
 board.run()
