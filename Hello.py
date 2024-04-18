@@ -29,14 +29,15 @@ if 'user_info' not in st.session_state:
     if do_you_have_an_account == 'Sign in':
         user, status, username = st_auth.login(auth)
     elif do_you_have_an_account =='Sign up':
-        try:
-            email, username, user = st_auth.register(auth, config)
-            if email:
-                firestore.saveconfig(config)
-                st.sidebar.success('User registered successfully, please login')
-                #firestore.openconfig.clear()
-        except Exception as e:
-            st.sidebar.error(e)
+        email, username, user = st_auth.register(auth, config)
+        #try:
+        #    email, username, user = st_auth.register(auth, config)
+        #    if email:
+        #        firestore.saveconfig(config)
+        #        st.sidebar.success('User registered successfully, please login')
+        #        #firestore.openconfig.clear()
+        #except Exception as e:
+        #    st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
         try:
             username, email, new_random_password = st_auth.forgotpassword(auth)
