@@ -10,11 +10,6 @@ def run():
     show_upcoming()
     st.subheader('Recent Committee Meetings')
     show_recent()
-    #if st.session_state["username"] =='btharp05':
-    #    postnew = st.button('post')
-    #    if postnew:
-    #        post_newmeeting()
-    #        print('posted')
 
 @st.cache_data
 def schedule():
@@ -63,10 +58,3 @@ def show_recent():
 
 def dateonly(datetimeobject):
     return '%s/%s/%s' % (datetimeobject.month, datetimeobject.day, datetimeobject.year)
-
-def post_newmeeting():
-    firestore.submit_record(number = 63,
-                  location = 'Cleveland',
-                  mtype = 'Hybrid',
-                  start = datetime(2024,6,5),
-                  end = datetime(2024,6,5))

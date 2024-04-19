@@ -93,30 +93,6 @@ def get_schedule(df):
         ]
     return df
 
-def submit_record(number, location, mtype, start, end):
-    try:
-        doc_ref = db.collection('meetings').document(str(number))
-        doc = doc_ref.get()
-        if doc.exists:
-            val = doc.to_dict()
-            val['number'] = number
-            val['location'] = location
-            val['type'] = mtype
-            val['start'] = start
-            val['end'] = end
-            doc_ref.set(val)
-        else:
-            doc_ref.set({
-                'number': number,
-                'location': location,
-                'type': mtype,
-                'start': start,
-                'end': end,
-            })
-    except Exception as error:
-        print(error)
-        st.session_state.auth_warning = 'Error: Please try again later'
-
 #---------roster----------------
 @st.cache_data
 def get_roster():

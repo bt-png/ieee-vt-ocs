@@ -11,7 +11,7 @@ config = firestore.openconfig()
 auth = st_auth.authenticate(config)
 
 import voting_tally as vt
-import st_cal
+import meetings
 import workinggroups as wg
 import board
 
@@ -95,7 +95,7 @@ else:
     st.markdown('''---''')
     col1,col2,col3 = st.columns([1,6,1])
     with col2:
-        st_cal.run()
+        meetings.run()
     st.markdown('''---''')
     col1,col2,col3 = st.columns([1,6,1])
     with col2:
