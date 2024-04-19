@@ -40,7 +40,8 @@ def updateuser(auth,conf):
 
 def register(auth, conf):
     try:
-        email, username, user = auth.register_user(location='sidebar', pre_authorization=False)
+        fieldval = {'Form name':'Create Account', 'Name': 'Full Name'}
+        email, username, user = auth.register_user(location='sidebar', pre_authorization=False, fields=fieldval)
         if email:
             st.sidebar.success('User created successfully')
             firestore.saveconfig(conf)
