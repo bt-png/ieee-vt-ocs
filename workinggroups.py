@@ -6,16 +6,16 @@ def run():
     linkstruct = 'https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&contentType=standards&queryText='
     dfPARS = PARS()
     dfPARS = dfPARS[dfPARS['Project Status'] == 'Draft Development']
-    dfPARS['Link'] = linkstruct + dfPARS['Project Number'].astype(str)
+    dfPARS['PARSLink'] = linkstruct + dfPARS['Project Number'].astype(str)
     dfSt = Standards()
-    dfSt['Link'] = linkstruct + dfSt['Standard Number'].astype(str)
+    dfSt['STDLink'] = linkstruct + dfSt['Standard Number'].astype(str)
     st.caption('Active PARS')
     st.dataframe(data=dfPARS,
                  hide_index=True,
                  height = ((min(len(dfPARS.index),5) + 1) * 35 + 3),
-                 column_order=['Link', 'Project Number', 'Expiration PAR Date', 'Project Title'],
+                 column_order=['PARSLink', 'Project Number', 'Expiration PAR Date', 'Project Title'],
                  column_config={
-                     'Link': st.column_config.LinkColumn(
+                     'PARSLink': st.column_config.LinkColumn(
                          label='',
                          display_text='IEEE Site',
                          width='small'
@@ -30,12 +30,13 @@ def run():
                  )
     
     st.caption('WG Published Standards')
-    st.dataframe(data=dfSt.style.apply(color_coding, axis=1),
+    #data=dfSt.style.apply(color_coding, axis=1)
+    st.dataframe(data=dfSt,
                  hide_index=True,
                  height = ((min(len(dfSt.index),5) + 1) * 35 + 3),
-                 column_order=['Link', 'Standard Number', 'Year', 'Project Title', 'Status'],
+                 column_order=['STDLink', 'Standard Number', 'Year', 'Project Title', 'Status'],
                  column_config={
-                     'Link': st.column_config.LinkColumn(
+                     'STDLink': st.column_config.LinkColumn(
                          label='',
                          display_text='IEEE Site',
                          width='small'
