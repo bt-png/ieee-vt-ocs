@@ -5,7 +5,7 @@ email_sender = st.secrets['Streamlit_email']
 password = st.secrets['Streamlit_IEEE']
 
 def passwordreset(email_receiver, new_password):
-    body = "You'r new password is: " + new_password
+    body = "Your new password is: " + new_password
     try:
         msg = MIMEText(body)
         msg['From'] = email_sender
@@ -22,7 +22,7 @@ def passwordreset(email_receiver, new_password):
         st.error(e)
     
 def forgotusername(email_receiver, username):
-    body = "You'r username is: " + username
+    body = "Your username is: " + username
     try:
         email_sender = st.secrets['Streamlit_email']
         msg = MIMEText(body)
