@@ -33,13 +33,12 @@ def run():
                 elif st.session_state.P1628_name == None:
                     st.warning('Please type a nominee...')
                 else:
-                    firestore.submit_nomination(st.session_state.P1628_name, 'P1628')
+                    nomination_df = firestore.submit_nomination(st.session_state.P1628_name, 'P1628')
                     if existing_vote == '':
                         st.caption(f"Your nomination for '{st.session_state.P1628_name}' has been entered")
                     else:
                         st.caption(f"Your nomination has been revised, '{st.session_state.P1628_name}' has been entered")
-                    get_nominations('P1628')
-                    st.warning('This form will be open until July 1st if you want to change your nomination.')
+                    show_nominations(nomination_df)
                 
     with st.expander('Nominate a candidate for P3357'):
         title = workinggroups.PARS_Title('P3357')
@@ -48,7 +47,6 @@ def run():
         st.caption('Scope: ' + scope)
         with st.form(key='Nomination form (P3357)',clear_on_submit=False):
             existing_vote = firestore.get_existing_nomination('P3357')
-            #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P3357_name')
             st.selectbox(
                 label = 'WG Chair Nominee Full Name',
                 options = roster.names(),
@@ -62,22 +60,19 @@ def run():
                 elif st.session_state.P3357_name == None:
                     st.warning('Please type a nominee...')
                 else:
-                    firestore.submit_nomination(st.session_state.P3357_name, 'P3357')
+                    nomination_df = firestore.submit_nomination(st.session_state.P3357_name, 'P3357')
                     if existing_vote == '':
                         st.caption(f"Your nomination for '{st.session_state.P3357_name}' has been entered")
                     else:
                         st.caption(f"Your nomination has been revised, '{st.session_state.P3357_name}' has been entered")
-                    get_nominations('P3357')
-                    st.warning('This form will be open until July 1st if you want to change your nomination.')
+                    show_nominations(nomination_df)
+                    
 
-def get_nominations(WG):
-    df = pd.DataFrame({
-        'Current Nominees': [],
-        'count': []
-    })
-    df = firestore.get_nominations(df, WG)
+#@st.cache_data
+def show_nominations(df):
     df = df.sort_values(by=['Current Nominees'], ascending=True)
     st.dataframe(data=df['Current Nominees'],
                  hide_index=True,
                  height = ((min(len(df.index),5) + 1) * 35 + 3),
                  use_container_width=True)
+    st.warning('This form will be open until July 1st if you want to change your nomination.')
