@@ -42,11 +42,15 @@ def show_recent(dfinput):
     st.dataframe(
         data=df.tail(3), 
         hide_index=True, 
-        column_order=['number', 'location', 'start'],
+        column_order=['link', 'number', 'location', 'start'],
         column_config={
             'start': st.column_config.DateColumn(
                 label='start date',
                 format='MMM D, YYYY'
+            ),
+            'link': st.column_config.LinkColumn(
+                label='',
+                display_text='Minutes'
             )
         }
         )
