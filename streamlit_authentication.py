@@ -57,7 +57,7 @@ def register(auth, conf):
 
 def forgotpassword(auth, conf):
     try:
-        username, email, new_random_password = auth.forgotpassword(location='sidebar')
+        username, email, new_random_password = auth.forgot_password(location='sidebar')
         if username:
             firestore.saveconfig(conf)
             emailclient.passwordreset(email, new_random_password)
