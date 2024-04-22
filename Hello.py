@@ -40,7 +40,7 @@ if 'user_info' not in st.session_state:
             st.session_state.user_info = user
         elif st.session_state['authentication_status'] is False:
             st.sidebar.error('Username/password is incorrect')
-        elif st.session_state['authentication_status'] is None:
+        elif st.session_state['authentication_status'] is None and do_you_have_an_account == 'Sign in':
             st.sidebar.warning('Please enter your username and password')
 else:
     if st.session_state['authentication_status'] is None:
