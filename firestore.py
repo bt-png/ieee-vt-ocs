@@ -125,18 +125,29 @@ def submit_nomination_ind(name, WG):
 
 #---------schedule----------------
 @st.cache_data
-def get_schedule(df):
-    doc_ref = db.collection('meetings')
-    for doc in doc_ref.stream():
-        items = doc.to_dict()
-        df.loc[len(df.index)] = [
-            items['number'], 
-            items['location'],
-            items['type'],
-            items['start'],
-            items['end']
-        ]
-    return df
+def get_schedule():
+    try:
+        doc_ref = db.collection('meetings').document('data')
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            df = pd.DataFrame.from_dict(data = val, orient='index')
+            df.sort_values(by='number', ascending=True, inplace=True)
+            df.reset_index(drop=True, inplace=True)
+            return df
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+def post_schedule(dfinput):
+    df = dfinput.copy()
+    df['Index'] = 'Meeting ' + df['number'].astype(str)
+    df = df.set_index('Index')
+    df_dict = df.transpose().to_dict()
+    try:
+        doc_ref = db.collection('meetings').document('data')
+        doc_ref.set(df_dict)
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
 
 #---------roster----------------
 @st.cache_data
