@@ -31,38 +31,10 @@ if 'user_info' not in st.session_state:
         user, status, username = st_auth.login(auth)
     elif do_you_have_an_account =='Sign up':
         email, username, user = st_auth.register(auth, config)
-        #try:
-        #    email, username, user = st_auth.register(auth, config)
-        #    if email:
-        #        firestore.saveconfig(config)
-        #        st.sidebar.success('User registered successfully, please login')
-        #        #firestore.openconfig.clear()
-        #except Exception as e:
-        #    st.sidebar.error(e)
     elif do_you_have_an_account == 'I forgot my password':
-        try:
-            username, email, new_random_password = st_auth.forgotpassword(auth)
-            if username:
-                st.sidebar.success('New password to be sent securely')
-                # The developer should securely transfer the new password to the user.
-                firestore.saveconfig(config)
-                st.sidebar.write('your new password is ' + new_random_password)
-            elif username == False:
-                st.sidebar.error('Username not found')
-        except Exception as e:
-            st.sidebar.error(e)
+        username, email, new_random_password = st_auth.forgotpassword(auth, config)
     elif do_you_have_an_account == 'I forgot my username':
-        try:
-            username, email = st_auth.forgotusername(auth)
-            if username:
-                st.sidebar.success('Username to be sent securely')
-                st.sidebar.write('your username is ' + username)
-                # The developer should securely transfer the username to the user.
-            elif username == False:
-                st.sidebar.error('Email not found')
-        except Exception as e:
-            st.sidebar.error(e)
-
+        username, email = st_auth.forgotusername(auth)
     if 'authentication_status' in st.session_state:
         if st.session_state['authentication_status']:
             st.session_state.user_info = user

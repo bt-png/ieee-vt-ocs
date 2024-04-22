@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit_authenticator as stauth #pip install streamlit-authenticator
 import firestore
+import emailclient
 
 def authenticate(config):
     authenticator = stauth.Authenticate(
@@ -54,8 +55,27 @@ def register(auth, conf):
     except Exception as e:
         st.sidebar.error(e)
 
-def forgotpassword(auth):
-    return auth.forgot_password(location='sidebar')
+def forgotpassword(auth, conf):
+    try:
+        username, email, new_random_password = auth.forgotpassword(location='sidebar')
+        if username:
+            firestore.saveconfig(conf)
+            emailclient.passwordreset(email, new_random_password)
+            return username, email, new_random_password
+        elif username == False:
+            st.sidebar.error('Username not found')
+    except Exception as e:
+        st.sidebar.error(e)
+    
 
 def forgotusername(auth):
-    return auth.forgot_username(location='sidebar')
+    try:
+        username, email = auth.forgot_username(location='sidebar')
+        if username:
+            emailclient.forgotusername(email, username)
+            return username, email
+        elif username == False:
+            st.sidebar.error('Email not found')
+    except Exception as e:
+        st.sidebar.error(e)
+    
