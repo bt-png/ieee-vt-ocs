@@ -52,7 +52,7 @@ else:
     ## Logged in -----------------------------------------
     ## ---------------------------------------------------
     # Show Admin Link
-    if st.session_state['username'] in ['btharp', '1schlick33', 'test']:
+    if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
         st.sidebar.checkbox(label='Show Admin Page', key='admin_page')
     else:
         st.session_state['admin_page']=False    
