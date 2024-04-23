@@ -1,3 +1,4 @@
+from math import ceil
 import streamlit as st
 import pandas as pd
 import firestore
@@ -41,3 +42,13 @@ def contact_list():
     email = df['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
     email = email.tolist()
     st.write(email, unsafe_allow_html=True)
+
+def totals_votingmembers():
+    return df.loc[df['Status']=='V', 'Status'].count()
+
+def meets_quorum(in_attendance, total_voting):
+    if total_voting < 50:
+        return in_attendance >= ceil(0.5*total_voting)
+    else:
+        return in_attendance >= max(ceil(0.1*total_voting), 26)
+    

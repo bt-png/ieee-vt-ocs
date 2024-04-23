@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime
 st.set_page_config(
         page_title='IEEE VT OCS Standards Committee',
         page_icon='🚊',
@@ -13,8 +14,7 @@ auth = st_auth.authenticate(config)
 import voting_tally as vt
 import meetings
 import workinggroups as wg
-import roster
-import board
+import officers
 import admin
 
 ## -------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ else:
     ## Logged in -----------------------------------------
     ## ---------------------------------------------------
     # Show Admin Link
-    if st.session_state['username'] in ['1btharp', '1schlick33']:
+    if st.session_state['username'] in ['btharp', '1schlick33', 'test']:
         st.sidebar.checkbox(label='Show Admin Page', key='admin_page')
     else:
         st.session_state['admin_page']=False    
@@ -66,15 +66,26 @@ else:
     
     if st.session_state['admin_page']:
         admin.run()
+        if datetime.date(datetime.today()) == meetings.next_meeting_date():
+            meetings.attendance_manual()
     else:
         st.write(f'Welcome, {st.session_state["name"]}\.')
         st.markdown('''---''')
         #st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {roster.member_status(st.session_state.user_info)}.')
         #st.markdown('''---''')
-        col1,col2,col3 = st.columns([1,6,1])
-        with col2:
-            vt.run()
-        st.markdown('''---''')
+        
+        if datetime.date(datetime.today()) == meetings.next_meeting_date():
+            col1,col2,col3 = st.columns([1,6,1])
+            with col2:
+                # Call for Nominations 4/22 through 6/1, 2024
+                meetings.attendance_statement()
+            st.markdown('''---''')
+        if datetime.today() < datetime(year=2024, month=6, day=1):
+            col1,col2,col3 = st.columns([1,6,1])
+            with col2:
+                # Call for Nominations 4/22 through 6/1, 2024
+                vt.run()
+            st.markdown('''---''')
         col1,col2,col3 = st.columns([1,6,1])
         with col2:
             meetings.run()
@@ -82,5 +93,5 @@ else:
         col1,col2,col3 = st.columns([1,6,1])
         with col2:
             wg.run()    
-        st.markdown('''---''')
-        board.run()
+st.markdown('''---''')
+officers.run()
