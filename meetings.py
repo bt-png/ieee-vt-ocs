@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 import firestore
 
-#@st.cache_data
+@st.cache_data
 def run():
     df = schedule()
     st.subheader('Upcoming Committee Meeting')
@@ -38,20 +38,15 @@ def show_upcoming(dfinput):
 
 def show_recent(dfinput):
     df = dfinput.copy()
-    st.dataframe(df)
     df.drop(df.tail(1).index, inplace=True)
     st.dataframe(
         data=df.tail(3), 
         hide_index=True, 
-        column_order=['link', 'number', 'location', 'start'],
+        column_order=['number', 'location', 'start'],
         column_config={
             'start': st.column_config.DateColumn(
                 label='start date',
                 format='MMM D, YYYY'
-            ),
-            'link': st.column_config.LinkColumn(
-                label='',
-                display_text='Minutes'
             )
         }
         )
