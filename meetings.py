@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 import firestore
 
-@st.cache_data
+#@st.cache_data
 def run():
     df = schedule()
     st.subheader('Upcoming Committee Meeting')
