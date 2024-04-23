@@ -38,6 +38,7 @@ def show_upcoming(dfinput):
 
 def show_recent(dfinput):
     df = dfinput.copy()
+    st.dataframe(df)
     df.drop(df.tail(1).index, inplace=True)
     st.dataframe(
         data=df.tail(3), 
