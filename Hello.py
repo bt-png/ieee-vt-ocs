@@ -13,8 +13,9 @@ auth = st_auth.authenticate(config)
 import voting_tally as vt
 import meetings
 import workinggroups as wg
+import roster
 import board
-
+import admin
 
 ## -------------------------------------------------------------------------------------------------
 ## Not logged in -----------------------------------------------------------------------------------
@@ -50,27 +51,36 @@ else:
     ## ---------------------------------------------------
     ## Logged in -----------------------------------------
     ## ---------------------------------------------------
+    # Show Admin Link
+    if st.session_state['username'] in ['1btharp', '1schlick33']:
+        st.sidebar.checkbox(label='Show Admin Page', key='admin_page')
+    else:
+        st.session_state['admin_page']=False    
     # Show user information
     st.sidebar.header('Hello ' + st.session_state.user_info +'!')
+    
     with st.sidebar.expander('Update Profile', expanded=False):
         st_auth.resetpassword(auth, config)
         st_auth.updateuser(auth, config)
     st_auth.logout(auth)
-    #st.write(st_auth.output(config))
-    st.write(f'Welcome, {st.session_state["name"]}\.')
-    #st.title('Some content')
     
-    st.markdown('''---''')
-    col1,col2,col3 = st.columns([1,6,1])
-    with col2:
-        vt.run()
-    st.markdown('''---''')
-    col1,col2,col3 = st.columns([1,6,1])
-    with col2:
-        meetings.run()
-    st.markdown('''---''')
-    col1,col2,col3 = st.columns([1,6,1])
-    with col2:
-        wg.run()
-st.markdown('''---''')
-board.run()
+    if st.session_state['admin_page']:
+        admin.run()
+    else:
+        st.write(f'Welcome, {st.session_state["name"]}\.')
+        st.markdown('''---''')
+        #st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {roster.member_status(st.session_state.user_info)}.')
+        #st.markdown('''---''')
+        col1,col2,col3 = st.columns([1,6,1])
+        with col2:
+            vt.run()
+        st.markdown('''---''')
+        col1,col2,col3 = st.columns([1,6,1])
+        with col2:
+            meetings.run()
+        st.markdown('''---''')
+        col1,col2,col3 = st.columns([1,6,1])
+        with col2:
+            wg.run()    
+        st.markdown('''---''')
+        board.run()

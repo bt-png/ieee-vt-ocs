@@ -66,7 +66,6 @@ def forgotpassword(auth, conf):
             st.sidebar.error('Username not found')
     except Exception as e:
         st.sidebar.error(e)
-    
 
 def forgotusername(auth):
     try:
