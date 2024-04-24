@@ -66,7 +66,7 @@ def post_nominations(df, WG):
         st.session_state.auth_warning = 'Error: Please try again later'
 
 def submit_nomination(name, WG):
-    get_existing_nomination.clear()
+    #get_existing_nomination.clear()
     df = get_nominations(WG)
     previous = submit_nomination_ind(name, WG)
     if previous:
