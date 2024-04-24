@@ -75,4 +75,4 @@ def show_nominations(df):
                  hide_index=True,
                  height = ((min(len(df.index),5) + 1) * 35 + 3),
                  use_container_width=True)
-    st.warning('This form will be open until July 1st if you want to change your nomination.')
+    st.warning('This form will be open until June 1st if you want to change your nomination.')
