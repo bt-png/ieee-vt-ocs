@@ -6,6 +6,7 @@ st.set_page_config(
         layout='wide'
     )
 
+testing = True
 import streamlit_authentication as st_auth
 import firestore
 config = firestore.openconfig()
@@ -74,13 +75,13 @@ else:
         #st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {roster.member_status(st.session_state.user_info)}.')
         #st.markdown('''---''')
         
-        if datetime.date(datetime.today()) == meetings.next_meeting_date():
+        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
             col1,col2,col3 = st.columns([1,6,1])
             with col2:
                 # Call for Nominations 4/22 through 6/1, 2024
                 meetings.attendance_statement()
             st.markdown('''---''')
-        if datetime.today() < datetime(year=2024, month=6, day=1):
+        if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:
             col1,col2,col3 = st.columns([1,6,1])
             with col2:
                 # Call for Nominations 4/22 through 6/1, 2024

@@ -161,21 +161,21 @@ def get_roster():
 def mark_in_attendance(fullname):
     doc_ref = db.collection('meetings').document(fullname)
     doc_ref.set({
-        'attendee': fullname,
-        'submitted': datetime.now(),
-        'submitted_by': st.session_state.user_info
+        'Attendee': fullname,
+        'Submitted': datetime.now(),
+        'Submitted_By': st.session_state.user_info
     })
 
 @st.cache_data
 def in_attendance():
     import roster
     df = pd.DataFrame({
-        'name': [],
-        'status': []
+        'Name': [],
+        'Status': []
     })
     doc_ref = db.collection('meetings')
     for doc in doc_ref.stream():
         if doc.id != 'data':
-            new_entry = pd.DataFrame([{'name': doc.id, 'status': roster.member_status(doc.id)}])
+            new_entry = pd.DataFrame([{'Name': doc.id, 'Status': roster.member_status(doc.id)}])
             df = pd.concat([df,new_entry], ignore_index=True)
     return df
