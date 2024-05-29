@@ -8,9 +8,11 @@ df = pd.DataFrame.from_dict(data=val, orient='index')
 df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 
+
 @st.cache_data
 def names():
     return df['Name']
+
 
 def match_user(txt):
     val = txt.title()
@@ -19,12 +21,23 @@ def match_user(txt):
     df_search = pd.concat([firstnames, lastnames], ignore_index=True)
     return df_search
 
+
 def match_user_key(key):
     df_search = match_user(st.session_state[key])
     st.dataframe(df_search, hide_index=True, use_container_width=True)
 
+
 def user_info(FullName):
     st.dataframe(df.loc[df['Name'] == FullName])
+
+
+def user_email(FullName):
+    return df['E-mail'].loc[df['Name'] == FullName].values
+
+
+def user_affiliations(FullName):
+    return df['Affiliation'].loc[df['Name'] == FullName].values
+
 
 def member_status(FullName):
     txt = df['Status'].loc[df['Name'] == FullName].values
@@ -36,6 +49,9 @@ def member_status(FullName):
         return 'Non-Member'
     elif txt == 'S':
         return 'Staff Member'
+    else:
+        return False
+
 
 def contact_list():
     #email = df['E-mail'].loc[df['E-mail'].notnull()].to_csv(sep=";",index=False, lineterminator='\r\n')
@@ -43,12 +59,13 @@ def contact_list():
     email = email.tolist()
     st.write(email, unsafe_allow_html=True)
 
+
 def totals_votingmembers():
     return df.loc[df['Status']=='V', 'Status'].count()
+
 
 def meets_quorum(in_attendance, total_voting):
     if total_voting < 50:
         return in_attendance >= ceil(0.5*total_voting)
     else:
         return in_attendance >= max(ceil(0.1*total_voting), 26)
-    

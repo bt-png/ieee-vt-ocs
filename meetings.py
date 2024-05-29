@@ -7,7 +7,6 @@ import firestore
 import roster
 
 
-@st.cache_data
 def run():
     df = schedule()
     st.subheader('Upcoming Committee Meeting')
@@ -15,9 +14,10 @@ def run():
     st.subheader('Recent Committee Meetings')
     show_recent(df)
 
-@st.cache_data
+
 def schedule():
     return firestore.get_schedule()
+
 
 def attendance_statement():
     if 'inattendance' not in st.session_state:
@@ -37,6 +37,7 @@ def attendance_statement():
             firestore.mark_in_attendance(st.session_state.user_info)
             st.rerun()
 
+
 def attendance_manual():
     with st.form(key='Attendance',clear_on_submit=True):
         st.selectbox(
@@ -50,8 +51,8 @@ def attendance_manual():
             st.caption(f'Attendance for {st.session_state.mark_attendance_manual} has been recorded as a {roster.member_status(st.session_state.mark_attendance_manual)}')
     if st.button('Update Attendance'):
         attendance_status()
-        
-@st.cache_data
+
+
 def next_meeting_date():
     test = False
     if test:
@@ -59,6 +60,7 @@ def next_meeting_date():
     else:
         df = schedule()
         return datetime.date(df.tail(1).start.tolist()[0])
+
 
 def show_upcoming(dfinput):
     df = dfinput.copy()
@@ -72,12 +74,13 @@ def show_upcoming(dfinput):
                 label='date',
                 format='MMM D, YYYY'
             ),
+            # 'time': st.column_config.TimeColumn(
+            #     label='start',
+            #     format='hh:mm a z'
+            # )
         }
-        )
-    #'time': st.column_config.TimeColumn(
-    #            label='start',
-    #            format='hh:mm a z'
-    #        )
+    )
+
 
 def show_recent(dfinput):
     df = dfinput.copy()
@@ -94,11 +97,14 @@ def show_recent(dfinput):
         }
         )
 
+
 def dateonly(datetimeobject):
     return '%s/%s/%s' % (datetimeobject.month, datetimeobject.day, datetimeobject.year)
 
+
 def attendance_count(df, status):
     return df.loc[df['status'] == status, 'name'].count()
+
 
 def attendance_status():
     df_attendance = firestore.in_attendance()
@@ -119,6 +125,7 @@ def attendance_status():
     else:
         st.warning(f'Quorum has not been met.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are in attendance)')
+
 
 #def post_meeting_attendance():
 #    df = schedule()

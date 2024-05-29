@@ -17,16 +17,17 @@ import meetings
 import workinggroups as wg
 import officers
 import admin
+import roster
 
-## -------------------------------------------------------------------------------------------------
-## Not logged in -----------------------------------------------------------------------------------
-## -------------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+# Not logged in -----------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 if 'user_info' not in st.session_state:
     col1,col2,col3 = st.columns([1,6,1])
     col2.header('IEEE VT OCS Standards Committee')
     col2.image(image='IMG_0079.jpg')
-    #col2.button('test', on_click=testfun())
+    # col2.button('test', on_click=testfun())
     do_you_have_an_account = st.empty()
     do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='mainone')
     if do_you_have_an_account == 'Sign in':
@@ -46,39 +47,46 @@ if 'user_info' not in st.session_state:
             st.sidebar.warning('Please enter your username and password')
 else:
     if st.session_state['authentication_status'] is None:
-        ## Logged out
+        # Logged out
         st.session_state.clear()
         st.rerun()
-    ## ---------------------------------------------------
-    ## Logged in -----------------------------------------
-    ## ---------------------------------------------------
+    # ---------------------------------------------------
+    # Logged in -----------------------------------------
+    # ---------------------------------------------------
     # Show Admin Link
     if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
         st.sidebar.checkbox(label='Show Admin Page', key='admin_page')
     else:
-        st.session_state['admin_page']=False    
+        st.session_state['admin_page'] = False
     # Show user information
-    st.sidebar.header('Hello ' + st.session_state.user_info +'!')
-    
+    st.sidebar.header('Hello ' + st.session_state.user_info + '!')
+
     with st.sidebar.expander('Update Profile', expanded=False):
         st_auth.resetpassword(auth, config)
         st_auth.updateuser(auth, config)
     st_auth.logout(auth)
-    
+
     if st.session_state['admin_page']:
         admin.run()
         if datetime.date(datetime.today()) == meetings.next_meeting_date():
             meetings.attendance_manual()
     else:
-        st.write(f'Welcome, {st.session_state["name"]}\.')
+        st.markdown(f'#### Welcome, {st.session_state["name"]}\.')
+        memberstatus = roster.member_status(st.session_state.user_info)
+        if memberstatus == False:
+            st.write('Your information could not be connected to the existing roster, please contact committee officers for help.')
+        else:
+        # st.markdown('''---''')
+            st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {memberstatus}.')
+            st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)}.')
+            st.write(f'The affiliations we have on file are {roster.user_affiliations(st.session_state.user_info)}.')
+            st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
         st.markdown('''---''')
-        #st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {roster.member_status(st.session_state.user_info)}.')
-        #st.markdown('''---''')
-        
+
         if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
             col1,col2,col3 = st.columns([1,6,1])
             with col2:
-                # Call for Nominations 4/22 through 6/1, 2024
+                # Active meeting attendance
                 meetings.attendance_statement()
             st.markdown('''---''')
         if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:
