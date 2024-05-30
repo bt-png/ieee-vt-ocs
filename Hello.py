@@ -91,7 +91,7 @@ else:
             st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
         st.markdown('''---''')
 
-        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing or True:
+        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
             col1,col2,col3 = st.columns([1,6,1])
             with col2:
                 # Active meeting attendance
