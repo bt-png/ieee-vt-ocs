@@ -75,7 +75,7 @@ else:
             if st.button('Save Attendance Record'):
                 roster.post_meeting_attendance()
             #st.write('Save Attendance')\
-            if True:
+            if testing:
                 if st.button('Archive Roster'):
                     firestore.archive_roster()
     else:

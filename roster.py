@@ -80,9 +80,10 @@ def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
     df_dict = df_dict.set_index('Index')
     dict_attendance = df_dict.transpose().to_dict()
     for user in attendeelist:
-        if 'meeting' in dict_attendance[user]:
+        #if 'meeting' in dict_attendance[user]:
+        try:
             dict_attendance[user]['meeting'].update({str(meetingnumber): True})
-        else:
+        except Exception:
             dict_attendance[user].update({'meeting': {str(meetingnumber): True}})
     df_r = pd.DataFrame.from_dict(data=dict_attendance, orient='index')
     return firestore.set_roster(df_r)
@@ -104,12 +105,13 @@ def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
         if member_status(user) != 'Voting Member':
             df_nonmember_attendance.append(user)
 
-    if 'attendance' in dict_attendance[meetingnumber]:
+    #if 'attendance' in dict_attendance[meetingnumber]:
+    try:
         dict_attendance[meetingnumber]['attendance'].update(
             {'Voting Members': df_member_attendance.to_dict(),
              'Other Attendees': df_nonmember_attendance}
              )
-    else:
+    except Exception:
         dict_attendance[meetingnumber].update(
             {'attendance': {
                 'Voting Members': df_member_attendance.to_dict(),
@@ -118,7 +120,6 @@ def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
             }
             )
     df_r = pd.DataFrame.from_dict(data=dict_attendance, orient='index')
-    st.write(df_r)
     return firestore.post_schedule(df_r)
 
 
