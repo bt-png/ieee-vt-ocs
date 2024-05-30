@@ -71,13 +71,12 @@ else:
         if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
             meetings.attendance_manual()
         # Show Save Attendance Link
-        if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
+        if (st.session_state['username'] in ['btharp', '1schlick33', '1test']) and testing:
             if st.button('Save Attendance Record'):
                 roster.post_meeting_attendance()
-            #st.write('Save Attendance')\
-            if testing:
-                if st.button('Archive Roster'):
-                    firestore.archive_roster()
+                #st.write('Save Attendance')\
+            if st.button('Archive Roster'):
+                firestore.archive_roster()
     else:
         st.markdown(f'#### Welcome, {st.session_state["name"]}\.')
         memberstatus = roster.member_status(st.session_state.user_info)
