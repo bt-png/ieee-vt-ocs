@@ -89,7 +89,7 @@ def post_nominee(df, name):
             new_record = pd.DataFrame([{'Current Nominees':name, 'count':1}])
             df = pd.concat([df, new_record], ignore_index=True)
     return df
-            
+  
 def remove_nominee(df, name):
     if not(df.empty) and name in df['Current Nominees'].values:
         i = df[df['Current Nominees'] == name].index[0]
@@ -130,7 +130,7 @@ def get_schedule():
         doc = doc_ref.get()
         if doc.exists:
             val = doc.to_dict()
-            df = pd.DataFrame.from_dict(data = val, orient='index')
+            df = pd.DataFrame.from_dict(data=val, orient='index')
             df.sort_values(by='number', ascending=True, inplace=True)
             df.reset_index(drop=True, inplace=True)
             return df
@@ -145,8 +145,18 @@ def post_schedule(dfinput):
     try:
         doc_ref = db.collection('meetings').document('data')
         doc_ref.set(df_dict)
+        return True
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+        return False
+
+def archive_schedule():
+    doc_ref = db.collection('roster').document('contactlist')
+    doc = doc_ref.get()
+    if doc.exists:
+        val = doc.to_dict()
+    doc_ref = db.collection('roster').document('contactlist_archive_20240529')
+    doc_ref.set(val)
 
 #---------roster----------------
 @st.cache_data
@@ -157,14 +167,60 @@ def get_roster():
         val = doc.to_dict()
         return val
 
+
+def archive_roster():
+    doc_ref = db.collection('roster').document('contactlist')
+    doc = doc_ref.get()
+    if doc.exists:
+        val = doc.to_dict()
+    doc_ref = db.collection('roster').document('contactlist_archive_20240529')
+    doc_ref.set(val)
+
+
+def set_roster(_dfinput):
+    df = _dfinput.copy()
+    df['Index'] = [str(last + ', ' + first) for last, first in zip(df['Last Name'], df['First Name'])]
+    df = df.set_index('Index')
+    df_dict = df.transpose().to_dict()
+    try:
+        doc_ref = db.collection('roster').document('contactlist')
+        doc_ref.set(df_dict)
+        return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+        return False
+
+
 #---------attendance----------------
 def mark_in_attendance(fullname):
-    doc_ref = db.collection('meetings').document(fullname)
-    doc_ref.set({
-        'Attendee': fullname,
-        'Submitted': datetime.now(),
-        'Submitted_By': st.session_state.user_info
-    })
+    try:
+        doc_ref = db.collection('meetings').document(fullname)
+        doc = doc_ref.get()
+        if doc.exists:
+            st.caption(f'{fullname} is already recorded as in attendance.')
+        else:
+            doc_ref.set({
+                'Attendee': fullname,
+                'Submitted': datetime.now(),
+                'Submitted_By': st.session_state.user_info
+            })
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def clear_in_attendance():
+    try:
+        doc_ref = db.collection('meetings')
+        batch = db.batch()
+        for doc in doc_ref.stream():
+            if doc.id != 'data':
+                batch.delete(doc.reference)
+        batch.commit()
+        return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+        return False
+
 
 @st.cache_data
 def in_attendance():

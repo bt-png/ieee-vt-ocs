@@ -55,7 +55,7 @@ else:
     # ---------------------------------------------------
     # Show Admin Link
     if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
-        st.sidebar.checkbox(label='Show Admin Page', key='admin_page')
+        st.sidebar.checkbox(label='Show Officer Page', key='admin_page')
     else:
         st.session_state['admin_page'] = False
     # Show user information
@@ -68,12 +68,20 @@ else:
 
     if st.session_state['admin_page']:
         admin.run()
-        if datetime.date(datetime.today()) == meetings.next_meeting_date():
+        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
             meetings.attendance_manual()
+        # Show Save Attendance Link
+        if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
+            if st.button('Save Attendance Record'):
+                roster.post_meeting_attendance()
+            #st.write('Save Attendance')\
+            if True:
+                if st.button('Archive Roster'):
+                    firestore.archive_roster()
     else:
         st.markdown(f'#### Welcome, {st.session_state["name"]}\.')
         memberstatus = roster.member_status(st.session_state.user_info)
-        if memberstatus == False:
+        if memberstatus is False:
             st.write('Your information could not be connected to the existing roster, please contact committee officers for help.')
         else:
         # st.markdown('''---''')
@@ -87,6 +95,7 @@ else:
             col1,col2,col3 = st.columns([1,6,1])
             with col2:
                 # Active meeting attendance
+                st.subheader('Record Attendance of Comittee Meeting')
                 meetings.attendance_statement()
             st.markdown('''---''')
         if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:

@@ -39,18 +39,21 @@ def attendance_statement():
 
 
 def attendance_manual():
-    with st.form(key='Attendance',clear_on_submit=True):
+    df_attendance = firestore.in_attendance()
+    #attendeeslist = df_attendance.name.tolist()
+    with st.form(key='Attendance', clear_on_submit=True):
         st.selectbox(
-            label = 'Mark in Attendance',
-            options = roster.names(),
+            label='Mark in Attendance',
+            options=roster.names(),
             index=None,
             placeholder='Select a Name',
             key='mark_attendance_manual')
-        if st.form_submit_button(label='Record',use_container_width=False):
+        if st.form_submit_button(label='Record', use_container_width=False):
             firestore.mark_in_attendance(st.session_state.mark_attendance_manual)
             st.caption(f'Attendance for {st.session_state.mark_attendance_manual} has been recorded as a {roster.member_status(st.session_state.mark_attendance_manual)}')
     if st.button('Update Attendance'):
-        attendance_status()
+        firestore.in_attendance.clear()
+        #attendance_status()
 
 
 def next_meeting_date():
@@ -108,8 +111,8 @@ def attendance_count(df, status):
 
 def attendance_status():
     df_attendance = firestore.in_attendance()
-    attendeeslist = df_attendance.name.tolist()
-    currentvotingmembership = 37 #roster.totals_votingmembers()
+    attendeeslist = df_attendance['Name'].tolist()
+    currentvotingmembership = roster.totals_votingmembers()
     inattendance_total = len(attendeeslist)
     inattendance_votingmembers = attendance_count(df_attendance, 'Voting Member')
     inattendance_nonvotingmembers = attendance_count(df_attendance, 'Non-Voting Member')
@@ -125,8 +128,3 @@ def attendance_status():
     else:
         st.warning(f'Quorum has not been met.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are in attendance)')
-
-
-#def post_meeting_attendance():
-#    df = schedule()
-#    df_attendance = firestore.in_attendance()

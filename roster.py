@@ -1,10 +1,11 @@
 from math import ceil
 import streamlit as st
 import pandas as pd
+import numpy as np
 import firestore
 
-val = firestore.get_roster()
-df = pd.DataFrame.from_dict(data=val, orient='index')
+roster_val = firestore.get_roster()
+df = pd.DataFrame.from_dict(data=roster_val, orient='index')
 df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 
@@ -61,7 +62,7 @@ def contact_list():
 
 
 def totals_votingmembers():
-    return df.loc[df['Status']=='V', 'Status'].count()
+    return df.loc[df['Status'] == 'V', 'Status'].count()
 
 
 def meets_quorum(in_attendance, total_voting):
@@ -69,3 +70,75 @@ def meets_quorum(in_attendance, total_voting):
         return in_attendance >= ceil(0.5*total_voting)
     else:
         return in_attendance >= max(ceil(0.1*total_voting), 26)
+
+
+def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
+    firestore.get_roster.clear()
+    roster_val = firestore.get_roster()
+    df_dict = pd.DataFrame.from_dict(data=roster_val, orient='index')
+    df_dict['Index'] = df_dict['Name']
+    df_dict = df_dict.set_index('Index')
+    dict_attendance = df_dict.transpose().to_dict()
+    for user in attendeelist:
+        if 'meeting' in dict_attendance[user]:
+            dict_attendance[user]['meeting'].update({str(meetingnumber): True})
+        else:
+            dict_attendance[user].update({'meeting': {str(meetingnumber): True}})
+    df_r = pd.DataFrame.from_dict(data=dict_attendance, orient='index')
+    return firestore.set_roster(df_r)
+
+
+def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
+    df_meetings = firestore.get_schedule()
+    df_meetings['Index'] = df_meetings['number']
+    df_meetings = df_meetings.set_index('Index')
+    dict_attendance = df_meetings.transpose().to_dict()
+
+    df_member_attendance = pd.DataFrame({})
+    df_member_attendance['Name'] = df[df['Status'] == 'V']['Name']
+    df_member_attendance['In Attendance'] = [user in attendeelist for user in df_member_attendance['Name']]
+    df_member_attendance = df_member_attendance.set_index('Name')
+
+    df_nonmember_attendance = []
+    for user in attendeelist:
+        if member_status(user) != 'Voting Member':
+            df_nonmember_attendance.append(user)
+
+    if 'attendance' in dict_attendance[meetingnumber]:
+        dict_attendance[meetingnumber]['attendance'].update(
+            {'Voting Members': df_member_attendance.to_dict(),
+             'Other Attendees': df_nonmember_attendance}
+             )
+    else:
+        dict_attendance[meetingnumber].update(
+            {'attendance': {
+                'Voting Members': df_member_attendance.to_dict(),
+                'Other Attendees': df_nonmember_attendance
+                }
+            }
+            )
+    df_r = pd.DataFrame.from_dict(data=dict_attendance, orient='index')
+    st.write(df_r)
+    return firestore.post_schedule(df_r)
+
+
+def post_meeting_attendance():
+    firestore.in_attendance.clear()
+    df_attendance = firestore.in_attendance()
+    listofmeetingattendees = df_attendance['Name'].tolist()
+
+    PostUsers = postMeetingAttendanceToRoster(listofmeetingattendees, 62)
+    PostSchedule = postMeetingAttendanceToSchedule(listofmeetingattendees, 62)
+
+    if PostUsers and PostSchedule:
+        if firestore.clear_in_attendance():
+            st.success('Attendance Recorded Sucessfully')
+        else:
+            st.warning('User data posted, however attendance did not clear.')
+    elif PostUsers and not PostSchedule:
+        st.warning('User data posted to users, but not schedule.')
+    elif PostSchedule and not PostUsers:
+        st.warning('User data posted to schedule, but not users.')
+    else:
+        st.warning('No data was posted.')
+    firestore.in_attendance.clear()
