@@ -90,6 +90,7 @@ def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
 
 
 def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
+    firestore.get_schedule.clear()
     df_meetings = firestore.get_schedule()
     df_meetings['Index'] = df_meetings['number']
     df_meetings = df_meetings.set_index('Index')
