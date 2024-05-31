@@ -7,6 +7,11 @@ import firestore
 import roster
 
 
+def lastname(name):
+    first, *middle, last = name.split()
+    return last
+
+
 def run():
     df = schedule()
     st.subheader('Upcoming Committee Meeting')
@@ -40,11 +45,14 @@ def attendance_statement():
 
 def attendance_manual():
     df_attendance = firestore.in_attendance()
-    #attendeeslist = df_attendance.name.tolist()
+    fullroster = roster.names()
+    listofmeetingattendees = df_attendance['Name'].tolist()
+    notinattendance = list(set(fullroster).difference(listofmeetingattendees))
+    notinattendance.sort(key=lastname)
     with st.form(key='Attendance', clear_on_submit=True):
         st.selectbox(
             label='Mark in Attendance',
-            options=roster.names(),
+            options=notinattendance,
             index=None,
             placeholder='Select a Name',
             key='mark_attendance_manual')

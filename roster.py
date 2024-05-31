@@ -15,6 +15,11 @@ def names():
     return df['Name']
 
 
+def lastname(name):
+    first, *middle, last = name.split()
+    return last
+
+
 def match_user(txt):
     val = txt.title()
     firstnames = df.loc[df['First Name'].str.startswith(val), 'Name']
@@ -90,7 +95,6 @@ def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
 
 
 def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
-    firestore.get_schedule.clear()
     df_meetings = firestore.get_schedule()
     df_meetings['Index'] = df_meetings['number']
     df_meetings = df_meetings.set_index('Index')
@@ -124,13 +128,14 @@ def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
     return firestore.post_schedule(df_r)
 
 
-def post_meeting_attendance():
+def post_meeting_attendance(activeMeeting):
     firestore.in_attendance.clear()
     df_attendance = firestore.in_attendance()
     listofmeetingattendees = df_attendance['Name'].tolist()
+    listofmeetingattendees.sort(key=lastname)
 
-    PostUsers = postMeetingAttendanceToRoster(listofmeetingattendees, 62)
-    PostSchedule = postMeetingAttendanceToSchedule(listofmeetingattendees, 62)
+    PostUsers = postMeetingAttendanceToRoster(listofmeetingattendees, activeMeeting)
+    PostSchedule = postMeetingAttendanceToSchedule(listofmeetingattendees, activeMeeting)
 
     if PostUsers and PostSchedule:
         if firestore.clear_in_attendance():

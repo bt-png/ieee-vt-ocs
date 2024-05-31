@@ -19,20 +19,22 @@ import officers
 import admin
 import roster
 
-# -------------------------------------------------------------------------------------------------
-# Not logged in -----------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------------------
 
-if 'user_info' not in st.session_state:
-    col1,col2,col3 = st.columns([1,6,1])
+def officerlist():
+    # Username of Officers
+    return ['btharp', '1schlick33', '1test']
+
+
+def home():
+    col1, col2, col3 = st.columns([1, 6, 1])
     col2.header('IEEE VT OCS Standards Committee')
     col2.image(image='IMG_0079.jpg')
     # col2.button('test', on_click=testfun())
     do_you_have_an_account = st.empty()
-    do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in','Sign up','I forgot my password','I forgot my username'), key='mainone')
+    do_you_have_an_account = st.sidebar.selectbox(label='Start here',options=('Sign in', 'Sign up', 'I forgot my password', 'I forgot my username'), key='mainone')
     if do_you_have_an_account == 'Sign in':
         user, status, username = st_auth.login(auth)
-    elif do_you_have_an_account =='Sign up':
+    elif do_you_have_an_account == 'Sign up':
         email, username, user = st_auth.register(auth, config)
     elif do_you_have_an_account == 'I forgot my password':
         username, email, new_random_password = st_auth.forgotpassword(auth, config)
@@ -45,6 +47,91 @@ if 'user_info' not in st.session_state:
             st.sidebar.error('Username/password is incorrect')
         elif st.session_state['authentication_status'] is None and do_you_have_an_account == 'Sign in':
             st.sidebar.warning('Please enter your username and password')
+
+
+def memberwelcome():
+    st.markdown(f'#### Welcome, {st.session_state["name"]}\.')
+    st.session_state.memberstatus = roster.member_status(st.session_state.user_info)
+    if st.session_state.memberstatus is False:
+        st.write('Your information could not be connected to the existing roster, please contact committee officers for help.')
+    else:
+    # st.markdown('''---''')
+        st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {st.session_state.memberstatus}.')
+        st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)}.')
+        st.write(f'The affiliations we have on file are {roster.user_affiliations(st.session_state.user_info)}.')
+        st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
+    st.markdown('''---''')
+
+
+def meetingattendance():
+    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+        col1, col2, col3 = st.columns([1, 6, 1])
+        with col2:
+            # Active meeting attendance
+            st.subheader('Record Attendance of Comittee Meeting')
+            meetings.attendance_statement()
+        st.markdown('''---''')
+
+
+def nominations():
+    if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:
+        col1, col2, col3 = st.columns([1, 6, 1])
+        with col2:
+            # Call for Nominations 4/22 through 6/1, 2024
+            vt.nominations()
+        st.markdown('''---''')
+
+
+def voting():
+    if False:
+        col1, col2, col3 = st.columns([1, 6, 1])
+        with col2:
+            st.subheader('Call for Vote')
+            if st.session_state.memberstatus == 'Voting Member':
+                st.write('\
+                    We are now open for voting, please use the form below to cast your vote.\
+                    ')
+                vt.vote('P1628', ['Cynthia', 'Andrew'])
+                vt.vote('P3357', ['bilal', 'brett', 'pandas'])
+            else:
+                st.write('A voting membership status is required to vote based on our committee policies and procedures. Voting status is \
+                            determined by attending at least 2 of the past 4 committee meetings.')
+        st.markdown('''---''')
+
+
+def officerpage():
+    admin.run()
+    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing or True:
+        meetings.attendance_manual()
+    # Show Save Attendance Link
+    if st.session_state['username'] in ['btharp']:
+        if st.button('Save Attendance Record'):
+            roster.post_meeting_attendance(63)
+        # st.write('Save Attendance')\
+        if False:
+            if st.button('Archive Roster'):
+                firestore.archive_roster()
+
+
+def viewmeetings():
+    col1, col2, col3 = st.columns([1, 6, 1])
+    with col2:
+        meetings.run()
+    st.markdown('''---''')
+
+
+def viewworkinggroups():
+    col1, col2, col3 = st.columns([1, 6, 1])
+    with col2:
+        wg.run()
+
+
+# -------------------------------------------------------------------------------------------------
+# Not logged in -----------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
+
+if 'user_info' not in st.session_state:
+    home()
 else:
     if st.session_state['authentication_status'] is None:
         # Logged out
@@ -54,7 +141,7 @@ else:
     # Logged in -----------------------------------------
     # ---------------------------------------------------
     # Show Admin Link
-    if st.session_state['username'] in ['btharp', '1schlick33', '1test']:
+    if st.session_state['username'] in officerlist():
         st.sidebar.checkbox(label='Show Officer Page', key='admin_page')
     else:
         st.session_state['admin_page'] = False
@@ -67,48 +154,13 @@ else:
     st_auth.logout(auth)
 
     if st.session_state['admin_page']:
-        admin.run()
-        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
-            meetings.attendance_manual()
-        # Show Save Attendance Link
-        if (st.session_state['username'] in ['btharp', '1schlick33', '1test']) and testing:
-            if st.button('Save Attendance Record'):
-                roster.post_meeting_attendance()
-                #st.write('Save Attendance')\
-            if st.button('Archive Roster'):
-                firestore.archive_roster()
+        officerpage()
     else:
-        st.markdown(f'#### Welcome, {st.session_state["name"]}\.')
-        memberstatus = roster.member_status(st.session_state.user_info)
-        if memberstatus is False:
-            st.write('Your information could not be connected to the existing roster, please contact committee officers for help.')
-        else:
-        # st.markdown('''---''')
-            st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {memberstatus}.')
-            st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)}.')
-            st.write(f'The affiliations we have on file are {roster.user_affiliations(st.session_state.user_info)}.')
-            st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
-        st.markdown('''---''')
-
-        if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
-            col1,col2,col3 = st.columns([1,6,1])
-            with col2:
-                # Active meeting attendance
-                st.subheader('Record Attendance of Comittee Meeting')
-                meetings.attendance_statement()
-            st.markdown('''---''')
-        if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:
-            col1,col2,col3 = st.columns([1,6,1])
-            with col2:
-                # Call for Nominations 4/22 through 6/1, 2024
-                vt.run()
-            st.markdown('''---''')
-        col1,col2,col3 = st.columns([1,6,1])
-        with col2:
-            meetings.run()
-        st.markdown('''---''')
-        col1,col2,col3 = st.columns([1,6,1])
-        with col2:
-            wg.run()    
+        memberwelcome()
+        meetingattendance()
+        nominations()
+        voting()
+        viewmeetings()
+        viewworkinggroups()
 st.markdown('''---''')
 officers.run()
