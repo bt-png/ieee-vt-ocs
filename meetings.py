@@ -97,7 +97,7 @@ def show_recent(dfinput):
     df = dfinput.copy()
     df.drop(df.tail(1).index, inplace=True)
     st.dataframe(
-        data=df.tail(3), 
+        data=df.tail(4), 
         hide_index=True, 
         column_order=['number', 'location', 'start'],
         column_config={

@@ -22,7 +22,7 @@ import roster
 
 def officerlist():
     # Username of Officers
-    return ['btharp', '1schlick33', '1test']
+    return ['btharp', 'schlick33', 'ucme4me', 'iccswusn', 'hriebeling']
 
 
 def home():
@@ -56,9 +56,12 @@ def memberwelcome():
         st.write('Your information could not be connected to the existing roster, please contact committee officers for help.')
     else:
     # st.markdown('''---''')
-        st.write(f'Based on our attendance records of the last four (4) committee meetings, you are a {st.session_state.memberstatus}.')
-        st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)}.')
-        st.write(f'The affiliations we have on file are {roster.user_affiliations(st.session_state.user_info)}.')
+        st.write(f'Your membership status is recorded as: {st.session_state.memberstatus}')
+        st.caption('Per our Policies and Procedures, voting membership is based on attendance of 2 of the last 4 committee meetings and participating in votes.')
+        col1,col2,col3 = st.columns([1,4,4])
+        col2.dataframe(roster.meeting_attendance_record(st.session_state.user_info), hide_index=False)
+        st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)} \
+                 with affiliations of {roster.user_affiliations(st.session_state.user_info)}.')
         st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
     st.markdown('''---''')
 
@@ -74,10 +77,10 @@ def meetingattendance():
 
 
 def nominations():
-    if (datetime.today() < datetime(year=2024, month=6, day=1)) or testing:
+    if (datetime.today() < datetime(year=2024, month=6, day=4)) or testing:
         col1, col2, col3 = st.columns([1, 6, 1])
         with col2:
-            # Call for Nominations 4/22 through 6/1, 2024
+            # Call for Nominations 4/22 through 6/4, 2024
             vt.nominations()
         st.markdown('''---''')
 
@@ -107,7 +110,6 @@ def officerpage():
     if st.session_state['username'] in ['btharp']:
         if st.button('Save Attendance Record'):
             roster.post_meeting_attendance(63)
-        # st.write('Save Attendance')\
         if False:
             if st.button('Archive Roster'):
                 firestore.archive_roster()
@@ -146,7 +148,8 @@ else:
     else:
         st.session_state['admin_page'] = False
     # Show user information
-    st.sidebar.header('Hello ' + st.session_state.user_info + '!')
+   
+    #st.sidebar.header('Hello!') # ' + roster.firstName(st.session_state.user_info) + '!')
 
     with st.sidebar.expander('Update Profile', expanded=False):
         st_auth.resetpassword(auth, config)

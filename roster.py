@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import firestore
+import meetings
 
 roster_val = firestore.get_roster()
 df = pd.DataFrame.from_dict(data=roster_val, orient='index')
@@ -40,6 +41,8 @@ def user_info(FullName):
 def user_email(FullName):
     return df['E-mail'].loc[df['Name'] == FullName].values
 
+def firstName(FullName):
+    return df['First Name'].loc[df['Name'] == FullName].values[0]
 
 def user_affiliations(FullName):
     return df['Affiliation'].loc[df['Name'] == FullName].values
@@ -57,6 +60,28 @@ def member_status(FullName):
         return 'Staff Member'
     else:
         return False
+
+
+def meeting_attendance_record(FullName):
+    allmeetings = meetings.schedule()
+    allmeetings.drop(allmeetings.tail(1).index, inplace=True)
+    allmeetings['Attended'] = False
+    #allmeetings['Attended'] = allmeetings['number']
+    txt = df['meeting'].loc[df['Name'] == FullName].copy()
+    txt.reset_index(drop=True, inplace=True)
+    _df = pd.DataFrame.from_dict(txt[0], orient='index')
+    _df['Meeting'] = _df.index
+    _df.rename(columns={0: 'Attended'}, inplace=True)
+    for meet in allmeetings['number'].tail(4):
+        if str(meet) not in _df['Meeting'].to_list():
+            _newrow = pd.DataFrame({'Meeting': [str(meet)], 'Attended': [False]})
+            _df = pd.concat([_df, _newrow], ignore_index=True)
+    _df.reset_index(drop=True, inplace=True)
+    _df.sort_values(by='Meeting', ascending=True, inplace=True)
+    _df = _df.set_index(['Meeting'])
+    _df = _df.tail(4)
+    _df = _df.transpose()
+    return _df
 
 
 def contact_list():
