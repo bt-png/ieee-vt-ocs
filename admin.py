@@ -29,9 +29,9 @@ def showroster(df):
     col2.link_button(label='Voting Members', url=f"mailto:?to={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
     col3.link_button(label='Active Members', url=f"mailto:?to={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
     if col4.button('All Members'):
-        col2.link_button(label='Blank Email', url=f"mailto:?subject=IEEE VT/OCS Standards Committee: ")
-        col3.link_button(label='Try Email', url=f"mailto:?to={email_all}subject=IEEE VT/OCS Standards Committee: ")
+        #col3.link_button(label='Try Email', url=f"mailto:?to={email_all}subject=IEEE VT/OCS Standards Committee: ")
         st.warning('There are too many addressess to create an email automatically. Copy the list below.')
+        st.link_button(label='Blank Email', url=f"mailto:?subject=IEEE VT/OCS Standards Committee: ")
         Path = f'''{email_all}'''
         st.code(Path, language="python")
 
