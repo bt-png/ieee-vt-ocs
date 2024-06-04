@@ -26,7 +26,6 @@ def showroster(df):
     email_nonvotingmembers =roster.contact_list_notvotingmember()
     email_activemembers =roster.contact_list_activemember()
     email_all =roster.contact_list_all()
-    # Open the default email client with the specified arguments
     col2.link_button(label='Voting Members', url=f"mailto:?to={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
     col3.link_button(label='Active Members', url=f"mailto:?to={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
     if col4.button('All Members'):
@@ -34,6 +33,7 @@ def showroster(df):
         st.warning('There are too many addressess to create an email automatically. Copy the list below.')
         Path = f'''{email_all}'''
         st.code(Path, language="python")
+
 
 def shownominations():
     st.subheader('Nominations')
