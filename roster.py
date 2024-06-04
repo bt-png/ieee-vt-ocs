@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import firestore
 import meetings
+import webbrowser
+
 
 roster_val = firestore.get_roster()
 df = pd.DataFrame.from_dict(data=roster_val, orient='index')
@@ -39,13 +41,16 @@ def user_info(FullName):
 
 
 def user_email(FullName):
-    return df['E-mail'].loc[df['Name'] == FullName].values
+    return df['E-mail'].loc[df['Name'] == FullName].values[0]
+
 
 def firstName(FullName):
     return df['First Name'].loc[df['Name'] == FullName].values[0]
 
+
 def user_affiliations(FullName):
-    return df['Affiliation'].loc[df['Name'] == FullName].values
+    affs = df['Affiliation'].loc[df['Name'] == FullName]
+    return list_to_string(affs)
 
 
 def member_status(FullName):
@@ -83,12 +88,32 @@ def meeting_attendance_record(FullName):
     _df = _df.transpose()
     return _df
 
+def list_to_string(list):
+    str = ''
+    for val in list:
+        if len(val)>0:
+            str += val + '; '
+    return str[:-2]
 
-def contact_list():
+def contact_list_votingmember():
+    email = df[df['Status'] == 'V']['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
+    return list_to_string(email)
+
+
+def contact_list_notvotingmember():
+    email = df[df['Status'] != 'V']['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
+    return list_to_string(email)
+
+
+def contact_list_activemember():
+    email = df[df['Status'] != 'O']['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
+    return list_to_string(email)
+
+
+def contact_list_all():
     #email = df['E-mail'].loc[df['E-mail'].notnull()].to_csv(sep=";",index=False, lineterminator='\r\n')
     email = df['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
-    email = email.tolist()
-    st.write(email, unsafe_allow_html=True)
+    return list_to_string(email)
 
 
 def totals_votingmembers():

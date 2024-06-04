@@ -20,7 +20,20 @@ def grey_color_func(word, font_size, position, orientation, random_state=None,
 def showroster(df):
     st.subheader('Committee Roster')
     st.dataframe(df, hide_index=True, column_order=['Status', 'Name', 'Affiliation', 'E-mail'])
-
+    st.write('Send email to committee')
+    col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
+    email_votingmembers = roster.contact_list_votingmember()
+    email_nonvotingmembers =roster.contact_list_notvotingmember()
+    email_activemembers =roster.contact_list_activemember()
+    email_all =roster.contact_list_all()
+    # Open the default email client with the specified arguments
+    col2.link_button(label='Voting Members', url=f"mailto:?to={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
+    col3.link_button(label='Active Members', url=f"mailto:?to={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
+    if col4.button('All Members'):
+        st.link_button(label='Blank Email', url=f"mailto:?subject=IEEE VT/OCS Standards Committee: ")
+        st.warning('There are too many addressess to create an email automatically. Copy the list below.')
+        Path = f'''{email_all}'''
+        st.code(Path, language="python")
 
 def shownominations():
     st.subheader('Nominations')
