@@ -8,7 +8,7 @@ import random
 
 
 def lastname(name):
-    first, *middle, last = name.split()
+    first, last = name.split()
     return last
 
 
