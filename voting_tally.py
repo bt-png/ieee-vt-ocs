@@ -29,9 +29,9 @@ def nominations():
                 key='P1628_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
-                if st.session_state.P1628_name == st.session_state['name']:
-                    st.error('You cannot nominate yourself!')
-                elif st.session_state.P1628_name == None:
+                #if st.session_state.P1628_name == st.session_state['name']:
+                #    st.error('You cannot nominate yourself!')
+                if st.session_state.P1628_name == None:
                     st.warning('Please type a nominee...')
                 else:
                     nomination_df = firestore.submit_nomination(st.session_state.P1628_name, 'P1628')
@@ -56,9 +56,9 @@ def nominations():
                 key='P3357_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
-                if st.session_state.P3357_name == st.session_state['name']:
-                    st.error('You cannot nominate yourself!')
-                elif st.session_state.P3357_name == None:
+                #if st.session_state.P3357_name == st.session_state['name']:
+                #    st.error('You cannot nominate yourself!')
+                if st.session_state.P3357_name == None:
                     st.warning('Please type a nominee...')
                 else:
                     nomination_df = firestore.submit_nomination(st.session_state.P3357_name, 'P3357')
@@ -82,9 +82,9 @@ def nominations():
                 key='P3425_name')
             vote_label = 'Submit' if existing_vote == '' else 'Change Vote'
             if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
-                if st.session_state.P3425_name == st.session_state['name']:
-                    st.error('You cannot nominate yourself!')
-                elif st.session_state.P3425_name == None:
+                #if st.session_state.P3425_name == st.session_state['name']:
+                #    st.error('You cannot nominate yourself!')
+                if st.session_state.P3425_name == None:
                     st.warning('Please type a nominee...')
                 else:
                     nomination_df = firestore.submit_nomination(st.session_state.P3425_name, 'P3425')
