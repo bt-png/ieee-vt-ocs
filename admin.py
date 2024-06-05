@@ -89,7 +89,8 @@ def showattendance(df_roster):
         else:
             st.warning('Quorum is not yet achieved')
     if col3.button('Refresh Attendance'):
-        firestore.in_attendance.clear()
+    #    firestore.in_attendance.clear()
+        st.rerun()
     col1, col2, col3 = st.columns([1, 10, 10])
     df_member_attendance = pd.DataFrame({})
     df_member_attendance['Name'] = df_roster[df_roster['Status'] == 'V']['Name']
