@@ -47,6 +47,9 @@ def shownominations():
     st.caption('P3357')
     df_P3357 = firestore.get_nominations('P3357')
     st.dataframe(df_P3357, hide_index=True)
+    st.caption('P3425')
+    df_P3425 = firestore.get_nominations('P3425')
+    st.dataframe(df_P3425, hide_index=True)
     st.markdown('---')
 
 
