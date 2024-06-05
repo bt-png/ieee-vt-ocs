@@ -8,7 +8,10 @@ import random
 
 
 def lastname(name):
-    first, last = name.split()
+    try:
+        first, *middle, last = name.split()
+    except Exception:
+        last = name
     return last
 
 
