@@ -13,7 +13,7 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds)
 
 #---------login----------------
-#@st.cache_data
+# @st.cache_data
 def openconfig():
     doc_ref = db.collection('roster').document('login')
     doc = doc_ref.get()
@@ -123,7 +123,7 @@ def submit_nomination_ind(name, WG):
         st.session_state.auth_warning = 'Error: Please try again later'
 
 #---------schedule----------------
-#@st.cache_data
+# @st.cache_data
 def get_schedule():
     try:
         doc_ref = db.collection('meetings').document('data')
@@ -159,7 +159,7 @@ def archive_schedule():
     doc_ref.set(val)
 
 #---------roster----------------
-#@st.cache_data
+# @st.cache_data
 def get_roster():
     doc_ref = db.collection('roster').document('contactlist')
     doc = doc_ref.get()
@@ -222,7 +222,7 @@ def clear_in_attendance():
         return False
 
 
-#@st.cache_data
+# @st.cache_data
 def in_attendance():
     import roster
     df = pd.DataFrame({
