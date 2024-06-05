@@ -41,7 +41,11 @@ def showroster(df):
         #col3.link_button(label='Try Email', url=f"mailto:?to={email_all}subject=IEEE VT/OCS Standards Committee: ")
         st.warning('There are too many addressess to create an email automatically. Copy the list below.')
         st.link_button(label='Blank Email', url=f"mailto:?subject=IEEE VT/OCS Standards Committee: ")
-        Path = f'''{email_all}'''
+        st.caption('Voting Members')
+        Path = f'''{email_votingmembers}'''
+        st.code(Path, language="python")
+        st.caption('Other Members')
+        Path = f'''{email_nonvotingmembers}'''
         st.code(Path, language="python")
 
 
