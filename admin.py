@@ -5,10 +5,7 @@ import firestore
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import random
-import meetings
-from datetime import datetime
 
-testing = False
 
 def lastname(name):
     try:
