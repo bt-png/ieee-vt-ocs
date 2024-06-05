@@ -61,7 +61,7 @@ def memberwelcome():
         col1,col2,col3 = st.columns([1,4,4])
         col2.dataframe(roster.meeting_attendance_record(st.session_state.user_info), hide_index=False)
         st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)} \
-                 with {roster.user_affiliations(st.session_state.user_info)} as your affiliations.')
+                 with {roster.user_affiliations(st.session_state.user_info)} as your affiliation.')
         st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
     st.markdown('''---''')
 
