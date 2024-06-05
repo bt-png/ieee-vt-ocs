@@ -91,8 +91,11 @@ def meeting_attendance_record(FullName):
 def list_to_string(list):
     str = ''
     for val in list:
-        if len(val)>0:
-            str += val + '; '
+        try:
+            if len(val)>0:
+                str += val + '; '
+        except Exception:
+            return str
     return str[:-2]
 
 def contact_list_votingmember():
