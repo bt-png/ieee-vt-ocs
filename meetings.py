@@ -59,9 +59,9 @@ def attendance_manual():
         if st.form_submit_button(label='Record', use_container_width=False):
             firestore.mark_in_attendance(st.session_state.mark_attendance_manual)
             st.caption(f'Attendance for {st.session_state.mark_attendance_manual} has been recorded as a {roster.member_status(st.session_state.mark_attendance_manual)}')
-    if st.button('Update Attendance'):
-        firestore.in_attendance.clear()
-        #attendance_status()
+    #if st.button('Update Attendance'):
+    #    firestore.in_attendance.clear()
+    #    #attendance_status()
 
 
 def next_meeting_date():
