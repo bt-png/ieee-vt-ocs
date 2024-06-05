@@ -108,8 +108,9 @@ def officerpage():
         meetings.attendance_manual()
     # Show Save Attendance Link
     if st.session_state['username'] in ['btharp']:
+        meetingnumber = st.number_input('Meeting Number', 
         if st.button('Save Attendance Record'):
-            roster.post_meeting_attendance(63)
+            roster.post_meeting_attendance(meetingnumber)
         if False:
             if st.button('Archive Roster'):
                 firestore.archive_roster()
