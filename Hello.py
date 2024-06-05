@@ -77,7 +77,7 @@ def meetingattendance():
 
 
 def nominations():
-    if (datetime.today() < datetime(year=2024, month=6, day=4)) or testing:
+    if (datetime.today() < datetime(year=2024, month=6, day=6)) or testing:
         col1, col2, col3 = st.columns([1, 6, 1])
         with col2:
             # Call for Nominations 4/22 through 6/4, 2024
