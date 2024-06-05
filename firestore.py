@@ -123,7 +123,7 @@ def submit_nomination_ind(name, WG):
         st.session_state.auth_warning = 'Error: Please try again later'
 
 #---------schedule----------------
-@st.cache_data
+#@st.cache_data
 def get_schedule():
     try:
         doc_ref = db.collection('meetings').document('data')
@@ -222,7 +222,7 @@ def clear_in_attendance():
         return False
 
 
-@st.cache_data
+#@st.cache_data
 def in_attendance():
     import roster
     df = pd.DataFrame({
