@@ -153,7 +153,7 @@ else:
 
     with st.sidebar.expander('Update Profile', expanded=False):
         st_auth.resetpassword(auth, config)
-        st_auth.updateuser(auth, config)
+        #st_auth.updateuser(auth, config)
     st_auth.logout(auth)
 
     if st.session_state['admin_page']:
