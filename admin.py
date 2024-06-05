@@ -22,8 +22,9 @@ def grey_color_func(word, font_size, position, orientation, random_state=None,
 
 def showroster(df):
     st.subheader('Committee Roster')
-    df['Status'] = [roster.member_status(name) for name in df['Name']]
-    st.dataframe(df, hide_index=True, column_order=['Status', 'Name', 'Affiliation', 'E-mail'])
+    _df = df.copy()
+    _df['Status'] = [roster.member_status(name) for name in _df['Name']]
+    st.dataframe(_df, hide_index=True, column_order=['Status', 'Name', 'Affiliation', 'E-mail'])
     st.write('Send email to committee')
     col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
     email_votingmembers = roster.contact_list_votingmember()
