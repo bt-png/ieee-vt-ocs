@@ -13,7 +13,7 @@ df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 
 
-#@st.cache_data
+# @st.cache_data
 def names():
     return df['Name']
 
@@ -201,4 +201,4 @@ def post_meeting_attendance(activeMeeting):
         st.warning('User data posted to schedule, but not users.')
     else:
         st.warning('No data was posted.')
-    firestore.in_attendance.clear()
+    # firestore.in_attendance.clear()
