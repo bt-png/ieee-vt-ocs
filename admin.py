@@ -5,7 +5,10 @@ import firestore
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import random
+import meetings
+from datetime import datetime
 
+testing = False
 
 def lastname(name):
     try:
@@ -132,4 +135,5 @@ def run():
     shownominations()
     df_roster = roster.df
     showroster(df_roster)
-    showattendance(df_roster)
+    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+        showattendance(df_roster)
