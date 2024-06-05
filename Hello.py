@@ -151,7 +151,7 @@ else:
    
     #st.sidebar.header('Hello!') # ' + roster.firstName(st.session_state.user_info) + '!')
 
-    with st.sidebar.expander('Update Profile', expanded=False):
+    with st.sidebar.container(): #expander('Update Profile', expanded=False):
         st_auth.resetpassword(auth, config)
         #st_auth.updateuser(auth, config)
     st_auth.logout(auth)
