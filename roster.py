@@ -13,7 +13,7 @@ df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 
 
-@st.cache_data
+#@st.cache_data
 def names():
     return df['Name']
 
@@ -131,7 +131,7 @@ def meets_quorum(in_attendance, total_voting):
 
 
 def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
-    firestore.get_roster.clear()
+    # firestore.get_roster.clear()
     roster_val = firestore.get_roster()
     df_dict = pd.DataFrame.from_dict(data=roster_val, orient='index')
     df_dict['Index'] = df_dict['Name']
@@ -182,7 +182,7 @@ def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
 
 
 def post_meeting_attendance(activeMeeting):
-    firestore.in_attendance.clear()
+    # firestore.in_attendance.clear()
     df_attendance = firestore.in_attendance()
     listofmeetingattendees = df_attendance['Name'].tolist()
     listofmeetingattendees.sort(key=lastname)
