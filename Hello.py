@@ -111,7 +111,7 @@ def officerpage():
         col1, col2 = st.columns([1,1])
         meetingnumber = col1.number_input('Meeting Number')
         if col2.button('Save Attendance Record'):
-            roster.post_meeting_attendance(meetingnumber)
+            roster.post_meeting_attendance(int(meetingnumber))
         if False:
             if st.button('Archive Roster'):
                 firestore.archive_roster()
