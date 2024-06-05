@@ -159,7 +159,7 @@ def archive_schedule():
     doc_ref.set(val)
 
 #---------roster----------------
-@st.cache_data
+#@st.cache_data
 def get_roster():
     doc_ref = db.collection('roster').document('contactlist')
     doc = doc_ref.get()
