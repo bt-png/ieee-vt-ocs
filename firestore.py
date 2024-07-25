@@ -27,6 +27,32 @@ def saveconfig(conf):
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
 
+#---------future attendance----------------
+def get_existing_attendancepoll(fullname):
+    try:
+        doc_ref = db.collection('futureattendance').document(fullname)
+        doc = doc_ref.get()
+        if doc.exists:
+            return doc.to_dict()['plan']
+        return ''
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+def post_attendancepoll(fullname, val):
+    try:
+        doc_ref = db.collection('futureattendance').document(fullname)
+        doc = doc_ref.get()
+        #if doc.exists:
+        #    st.caption(f'{fullname} is already recorded as in attendance.')
+        #else:
+        doc_ref.set({
+            'Attendee': fullname,
+            'Submitted': datetime.now(),
+            'plan': val
+        })
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
 #---------nominations----------------
 def get_existing_nomination(WG):
     try:

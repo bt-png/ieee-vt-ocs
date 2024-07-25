@@ -76,8 +76,16 @@ def meetingattendance():
         st.markdown('''---''')
 
 
+def pollfutureattendance():
+    if (datetime.date(datetime.today()) < meetings.next_meeting_date()) or testing:
+        col1, col2, col3 = st.columns([1, 6, 1])
+        with col2:
+            vt.attendingnextmeeting()
+        st.markdown('''---''')
+
+
 def nominations():
-    if (datetime.today() < datetime(year=2024, month=6, day=6)) or testing:
+    if (datetime.today() < datetime(year=2024, month=9, day=9)) or testing:
         col1, col2, col3 = st.columns([1, 6, 1])
         with col2:
             # Call for Nominations 4/22 through 6/4, 2024
@@ -152,6 +160,7 @@ else:
     else:
         memberwelcome()
         meetingattendance()
+        pollfutureattendance()
         nominations()
         voting()
         viewmeetings()

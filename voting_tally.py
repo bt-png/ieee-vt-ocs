@@ -5,6 +5,38 @@ import firestore
 import roster
 
 
+def attendingnextmeeting():
+    st.subheader('Do you plan to attend our next meeting?')
+    st.write('\
+        Firstly, we want to thank Toronto Transit Commission for hosting our next committee meeting on September 9th-10th!\
+        ')
+    st.write('\
+        We are asking you to let us know if and how you plan to attend, so we can be prepared for accomodating \
+        the group. TTC have also asked for an attendee list so they can speed up the check in process through security.\
+        ')
+    st.write('\
+        We are also still looking for meal sponsors and meeting presenters. If you are interested in either, please [Contact the Officers](mailto:stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com).\
+        ')
+    st.caption('Please indicate if you plan to attend, and if so, if it will be in person or virtual.')
+    with st.form(key='Future Attendance', clear_on_submit=False):
+        existing_poll = firestore.get_existing_attendancepoll(st.session_state['name'])
+        #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
+        st.selectbox(
+            label = 'Do you plan on attending?',
+            options = ['Yes, in person','Yes, virtually','No, not this time'],
+            index=None,
+            placeholder= "Select..." if existing_poll == '' else existing_poll,
+            key='FutureAttendance')
+        vote_label = 'Submit' if existing_poll == '' else 'Change Planned Attendance'
+        if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
+            if st.session_state.FutureAttendance == None:
+                st.warning('Please make a selection')
+            else:
+                firestore.post_attendancepoll(st.session_state['name'], st.session_state.FutureAttendance)
+                st.rerun()
+    if existing_poll == 'Yes, in person':
+        st.write('Thank you for your attendance. Hotel booking information will be made available shortly.')
+
 def nominations():
     st.subheader('Call for Nominations')
     st.write('\
@@ -102,7 +134,7 @@ def show_nominations(df):
                  hide_index=True,
                  height=((min(len(df.index), 5) + 1) * 35 + 3),
                  use_container_width=True)
-    st.warning('This form will be open until June 4th if you want to change your nomination.')
+    st.warning('This form will be open until September 8th if you want to change your nomination.')
 
 
 def vote(WG, names):
