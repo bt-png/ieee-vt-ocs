@@ -48,6 +48,22 @@ def showroster(df):
         Path = f'''{email_nonvotingmembers}'''
         st.code(Path, language="python")
 
+def showfutureattendance():
+    st.subheader('Next meeting Attendance')
+    df_poll = firestore.future_attendee_list()
+    st.caption('Total Counts')
+    st.dataframe(df_poll.groupby(['Attendance Poll']).count(), column_order=['Attendance Poll', 'Name'], column_config=({
+        'Name': st.column_config.NumberColumn(label='count')
+        }))
+    st.caption('Counts by Member Status')
+    st.dataframe(df_poll.groupby(['Attendance Poll', 'Status']).count(), column_config=({
+        'Name': st.column_config.NumberColumn(label='count')
+        }))
+    st.caption('List of planned in-person attendee\'s')
+    st.text(df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list())
+    st.caption('Polling Results')
+    st.dataframe(df_poll, hide_index=True)
+
 
 def shownominations():
     st.subheader('Nominations')
@@ -136,6 +152,8 @@ def showattendance(df_roster):
 
 def run():
     st.header('Officers Administration Page')
+    st.markdown('---')
+    showfutureattendance()
     st.markdown('---')
     shownominations()
     df_roster = roster.df

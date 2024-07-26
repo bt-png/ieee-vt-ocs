@@ -53,6 +53,23 @@ def post_attendancepoll(fullname, val):
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
 
+def future_attendee_list():
+    import roster
+    df = pd.DataFrame({
+        'Name': [],
+        'Status': [],
+        'Attendance Poll': [],
+    })
+    doc_ref = db.collection('futureattendance')
+    for doc in doc_ref.stream():
+        new_entry = pd.DataFrame([{
+            'Name': doc.id,
+            'Status': roster.member_status(doc.id),
+            'Attendance Poll': doc.to_dict()['plan']
+            }])
+        df = pd.concat([df,new_entry], ignore_index=True)
+    return df
+
 #---------nominations----------------
 def get_existing_nomination(WG):
     try:
