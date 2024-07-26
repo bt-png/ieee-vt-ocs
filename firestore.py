@@ -37,14 +37,11 @@ def get_existing_attendancepoll(fullname):
         return ''
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+        return ''
 
 def post_attendancepoll(fullname, val):
     try:
         doc_ref = db.collection('futureattendance').document(fullname)
-        doc = doc_ref.get()
-        #if doc.exists:
-        #    st.caption(f'{fullname} is already recorded as in attendance.')
-        #else:
         doc_ref.set({
             'Attendee': fullname,
             'Submitted': datetime.now(),

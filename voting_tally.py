@@ -23,7 +23,7 @@ def attendingnextmeeting():
         #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
         st.selectbox(
             label = 'Do you plan on attending?',
-            options = ['Yes, in person','Yes, virtually','No, not this time'],
+            options = ['Yes, in person', 'Yes, virtually', 'No, not this time'],
             index=None,
             placeholder= "Select..." if existing_poll == '' else existing_poll,
             key='FutureAttendance')
