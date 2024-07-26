@@ -51,18 +51,36 @@ def showroster(df):
 def showfutureattendance():
     st.subheader('Next meeting Attendance')
     df_poll = firestore.future_attendee_list()
-    st.caption('Total Counts')
-    st.dataframe(df_poll.groupby(['Attendance Poll']).count(), column_order=['Attendance Poll', 'Name'], column_config=({
-        'Name': st.column_config.NumberColumn(label='count')
-        }))
-    st.caption('Counts by Member Status')
-    st.dataframe(df_poll.groupby(['Attendance Poll', 'Status']).count(), column_config=({
-        'Name': st.column_config.NumberColumn(label='count')
-        }))
+    df_poll['Attending'] = ['Yes' in x for x in df_poll['Attendance Poll']]
+    inattendance_total = df_poll[(df_poll['Attending'] == True)]['Attending'].count()
+    attendee_list = df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list()
+    attendee_list.sort()
+    txt = ''
+    for name in attendee_list:
+        txt += name
+        if name == attendee_list[-2]:
+            txt += ' and '
+        elif name != attendee_list[-1]:
+            txt += ', '
+    inperson_total = df_poll[(df_poll['Attendance Poll'] == 'Yes, in person')]['Attending'].count()
+    currentvotingmembership = roster.totals_votingmembers()
+    inattendance_votingmembers = df_poll[(df_poll['Attending'] == True) & (df_poll['Status'] == 'Voting Member')]['Attending'].count()
+    quorum = roster.meets_quorum(inattendance_votingmembers, currentvotingmembership)
+    st.write(f'There are currently {inattendance_total} total participants planning to attend, {inperson_total} of which are planning to attend in person.')
     st.caption('List of planned in-person attendee\'s')
-    st.text(df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list())
+    st.write(txt)
+    st.caption('Expected Quorum')
+    if quorum:
+        st.success(f'Quorum may be achieved  \n \
+                   ({inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
+    else:
+        st.warning(f'Quorum may not be met.  \n \
+                   (only {inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
+        
+
+    
     st.caption('Polling Results')
-    st.dataframe(df_poll, hide_index=True)
+    st.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
 
 
 def shownominations():

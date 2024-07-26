@@ -64,7 +64,7 @@ def member_status(FullName):
     elif txt == 'S':
         return 'Staff Member'
     else:
-        return False
+        return 'Not Registered'
 
 
 def meeting_attendance_record(FullName):
