@@ -123,11 +123,15 @@ def totals_votingmembers():
     return df.loc[df['Status'] == 'V', 'Status'].count()
 
 
-def meets_quorum(in_attendance, total_voting):
+def quorum_required(total_voting):
     if total_voting < 50:
-        return in_attendance >= ceil(0.5*total_voting)
+        return ceil(0.5*total_voting)
     else:
-        return in_attendance >= max(ceil(0.1*total_voting), 26)
+        return max(ceil(0.1*total_voting), 26)
+
+
+def meets_quorum(in_attendance, total_voting):
+    return in_attendance >= quorum_required(total_voting)
 
 
 def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):

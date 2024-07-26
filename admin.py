@@ -71,10 +71,10 @@ def showfutureattendance():
     st.write(txt)
     st.caption('Expected Quorum')
     if quorum:
-        st.success(f'Quorum may be achieved  \n \
+        st.success(f'Quorum may be achieved, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    ({inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
     else:
-        st.warning(f'Quorum may not be met.  \n \
+        st.warning(f'Quorum may not be met, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
         
 
