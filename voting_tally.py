@@ -41,7 +41,7 @@ def nominations():
     st.subheader('Call for Nominations')
     st.write('\
         We have openings for the position of Working Group Chair \
-        for two (2) of our committees, and are looking for nominations!\
+        for three (3) of our committees, and are looking for nominations!\
         Each committee has a form below. Please use them to cast your nomination.\
         ')
     st.caption('Voting will take place at our next comittee meeting.')
