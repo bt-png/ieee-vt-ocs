@@ -24,11 +24,36 @@ def grey_color_func(word, font_size, position, orientation, random_state=None,
     return "hsl(0, 0%%, %d%%)" % random.randint(60, 100)
 
 
+def updateroster(df):
+    st.subheader('Update Roster')
+    _df = df.copy()
+    _df['Status'] = [roster.member_status(name) for name in _df['Name']]
+    user_cat_input = st.multiselect(
+        f'Name',
+        _df['Name'].unique(),
+    )
+    if len(user_cat_input) > 0:
+        _df = _df[_df['Name'].isin(user_cat_input)]
+    if len(_df.index) == 1:
+        st.dataframe(_df, hide_index=True)
+
+
 def showroster(df):
     st.subheader('Committee Roster')
     _df = df.copy()
     _df['Status'] = [roster.member_status(name) for name in _df['Name']]
-    st.dataframe(_df, hide_index=True, column_order=['Type', 'Status', 'Name', 'Affiliation', 'E-mail'])
+    col1, col2 = st.columns([8,2])
+    to_filter_columns = ('Type', 'Status', 'Name', 'Affiliation')#st.multiselect("Filter dataframe on", df.columns)
+    for column in to_filter_columns:
+        user_cat_input = col2.multiselect(
+            f"Values for {column}",
+            _df[column].unique(),
+            #default=list(df[column].unique())
+        )
+        if len(user_cat_input) > 0:
+            _df = _df[_df[column].isin(user_cat_input)]
+    col1.dataframe(_df, hide_index=True, column_order=['Type', 'Status', 'Name', 'Affiliation', 'E-mail'])
+    col1.caption(f'Displaying {len(_df.index)} total rows')
     st.write('Send email to committee')
     col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
     email_votingmembers = roster.contact_list_votingmember()
@@ -176,6 +201,7 @@ def run():
     shownominations()
     df_roster = roster.df
     showroster(df_roster)
+    # updateroster(df_roster)
     if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
         showattendance(df_roster)
         meetings.attendance_manual()
