@@ -38,6 +38,38 @@ def updateroster(df):
         st.dataframe(_df, hide_index=True)
 
 
+def addnewPerson(df):
+    _df = df.copy()
+    with st.expander(label='Add a New Member', expanded=False):
+        with st.form(key='AddUser', clear_on_submit=True):
+            col1, col2 = st.columns([1,1])
+            FirstName = col1.text_input('First Name')
+            LastName = col2.text_input('Last Name')
+            Email = st.text_input('E-mail')
+            Affiliation = st.text_input('Affiliation')
+            Employer = st.text_input('Employer')
+            Type = st.selectbox('Type', options=['Agency', 'Constructor/Integrator', 'Consultant', 'Supplier/Manufacturer/Vendor'])      
+            if st.form_submit_button('Submit'):
+                Status = 'O'
+                Name = FirstName + ' ' + LastName
+                new_user = pd.DataFrame({
+                    'Affiliation': [Affiliation],
+                    'E-mail': [Email],
+                    'Employer': [Employer],
+                    'First Name': [FirstName],
+                    'Last Name': [LastName],
+                    'Name': [Name],
+                    'Status': [Status],
+                    'Type': [Type],
+                    'meeting': [None]
+                    })
+                _df = pd.concat([_df, new_user], ignore_index=True)
+                # st.dataframe(_df)
+                if firestore.set_roster(_df):
+                    st.success('Saved')
+                    roster.refresh_df()
+
+
 def showroster(df):
     st.subheader('Committee Roster')
     _df = df.copy()
@@ -201,6 +233,7 @@ def run():
     shownominations()
     df_roster = roster.df
     showroster(df_roster)
+    addnewPerson(df_roster)
     # updateroster(df_roster)
     if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
         showattendance(df_roster)

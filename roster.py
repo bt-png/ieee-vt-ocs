@@ -6,11 +6,19 @@ import firestore
 import meetings
 import webbrowser
 
-
 roster_val = firestore.get_roster()
 df = pd.DataFrame.from_dict(data=roster_val, orient='index')
 df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
+
+@st.cache_data
+def refresh_df():
+    roster_val = firestore.get_roster()
+    _df = pd.DataFrame.from_dict(data=roster_val, orient='index')
+    _df.sort_values(by='Last Name', ascending=True, inplace=True)
+    _df.reset_index(drop=True, inplace=True)
+    global df 
+    df = _df
 
 
 # @st.cache_data
@@ -206,3 +214,4 @@ def post_meeting_attendance(activeMeeting):
     else:
         st.warning('No data was posted.')
     # firestore.in_attendance.clear()
+
