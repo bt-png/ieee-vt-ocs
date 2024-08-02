@@ -38,7 +38,7 @@ def attendingnextmeeting():
         with st.container():
             st.write('Thank you for your attendance!)
             st.subheader('Hotel booking information')
-            st.markdown("""
+            st.markdown(""" \
             The booking link is setup for the full duration for both OCS/TPSS meetings. Please update the dates if you intend only to be there for one of the meetings, the rate should remain. \
             Booking Link: https://www.hilton.com/en/book/reservation/deeplink/?ctyhocn=YTOCSDT&groupCode=CDT92B&arrivaldate=2024-09-08&departuredate=2024-09-13&cid=OM,WW,HILTONLINK,EN,DirectLink&fromId=HILTONLINKDIRECT \
             The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well. \
