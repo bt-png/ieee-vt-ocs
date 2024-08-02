@@ -46,6 +46,10 @@ def attendingnextmeeting():
             The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well.
             The cut-off date for the weblink is August 20th, 2024, so we have less than 3 weeks to book.
             """)
+    elif existing_poll == 'Yes, virtually':
+        st.write('Thank you for your attendance!')
+    elif existing_poll == 'No, not this time':
+        st.write('Thank you for letting us know.')
 
 def nominations():
     st.subheader('Call for Nominations')
