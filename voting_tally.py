@@ -35,7 +35,8 @@ def attendingnextmeeting():
                 firestore.post_attendancepoll(st.session_state['name'], st.session_state.FutureAttendance)
                 st.rerun()
     if existing_poll == 'Yes, in person':
-        st.write('Thank you for your attendance. Hotel booking information will be made available shortly.')
+        with st.container():
+            st.write('Thank you for your attendance. Hotel booking information will be made available shortly.')
 
 def nominations():
     st.subheader('Call for Nominations')
