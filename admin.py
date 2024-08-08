@@ -137,9 +137,9 @@ def showfutureattendance():
     col1, col2 = st.columns([4, 2])
     col1.caption('Polling Results')
     col1.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
-    notanswered = roster.names()
-    notanswered = notanswered not in df_poll['Name'].to_list()
-    st.write(notanswered)
+    # notanswered = roster.names()
+    # notanswered = notanswered not in df_poll['Name'].to_list()
+    # st.write(notanswered)
     with col2.form(key='ADMIN Future Attendance', clear_on_submit=True):
         st.selectbox(
             label = 'Attendee',
