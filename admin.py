@@ -105,6 +105,7 @@ def showroster(df):
         Path = f'''{email_nonvotingmembers}'''
         st.code(Path, language="python")
 
+
 def showfutureattendance():
     st.subheader('Next meeting Attendance')
     df_poll = firestore.future_attendee_list()
@@ -154,7 +155,7 @@ def showfutureattendance():
             if st.session_state.ADMINFutureAttendance == None:
                 st.warning('Please make a selection')
             else:
-                firestore.post_attendancepoll(st.session_state.ADMINFutureAttendee, st.session_state.FutureAttendance)
+                firestore.post_attendancepoll(st.session_state.ADMINFutureAttendee, st.session_state.ADMINFutureAttendance)
                 st.rerun()
 
 
