@@ -133,11 +133,29 @@ def showfutureattendance():
     else:
         st.warning(f'Quorum may not be met, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
-        
-
-    
-    st.caption('Polling Results')
-    st.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
+    col1, col2 = st.columns([4, 2])
+    col1.caption('Polling Results')
+    col1.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
+    with col2.form(key='ADMIN Future Attendance', clear_on_submit=False):
+        st.selectbox(
+            label = 'Attendee',
+            options = roster.names(),
+            index=None,
+            placeholder= "Select...",
+            key='ADMINFutureAttendee')
+        st.selectbox(
+            label = 'Do you plan on attending?',
+            options = ['Yes, in person', 'Yes, virtually', 'No, not this time'],
+            index=None,
+            placeholder= "Select...",
+            key='ADMINFutureAttendance')
+        vote_label = 'Submit Attendance'
+        if st.form_submit_button(label=vote_label,use_container_width=False,type='primary'):
+            if st.session_state.ADMINFutureAttendance == None:
+                st.warning('Please make a selection')
+            else:
+                firestore.post_attendancepoll(st.session_state.ADMINFutureAttendee, st.session_state.FutureAttendance)
+                st.rerun()
 
 
 def shownominations():
