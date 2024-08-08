@@ -75,7 +75,7 @@ def showroster(df):
     _df = df.copy()
     _df['Status'] = [roster.member_status(name) for name in _df['Name']]
     col1, col2 = st.columns([8,2])
-    to_filter_columns = ('Type', 'Status', 'Name', 'Affiliation', 'E-mail')#st.multiselect("Filter dataframe on", df.columns)
+    to_filter_columns = ('Name', 'Affiliation', 'Type', 'Status', 'E-mail')#st.multiselect("Filter dataframe on", df.columns)
     for column in to_filter_columns:
         user_cat_input = col2.multiselect(
             f"Values for {column}",
@@ -84,7 +84,7 @@ def showroster(df):
         )
         if len(user_cat_input) > 0:
             _df = _df[_df[column].isin(user_cat_input)]
-    col1.dataframe(_df, hide_index=True, column_order=['Type', 'Status', 'Name', 'Affiliation', 'E-mail'])
+    col1.dataframe(_df, hide_index=True, column_order=['Name', 'Affiliation', 'Type', 'Status', 'E-mail'])
     col1.caption(f'Displaying {len(_df.index)} total rows')
     st.write('Send email to committee')
     col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
