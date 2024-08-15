@@ -76,6 +76,7 @@ def showroster(df):
     _df = df.copy()
     _df['Status'] = [roster.member_status(name) for name in _df['Name']]
     col1, col2 = st.columns([8,2])
+    col2.write('Apply filters to the Committee Roster')
     to_filter_columns = ('Name', 'Affiliation', 'Type', 'Status', 'E-mail')#st.multiselect("Filter dataframe on", df.columns)
     for column in to_filter_columns:
         user_cat_input = col2.multiselect(
