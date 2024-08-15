@@ -128,26 +128,29 @@ def showfutureattendance():
     st.write(f'There are currently {inattendance_total} total participants planning to attend, {inperson_total} of which are planning to attend in person.')
     st.caption('List of planned in-person attendee\'s')
     st.write(txt)
-    st.caption('Expected Quorum')
+    
+    col1, col2 = st.columns([4, 2])
+    col1.caption('Expected Quorum')
     if quorum:
-        st.success(f'Quorum may be achieved, {roster.quorum_required(currentvotingmembership)} required.  \n \
+        col1.success(f'Quorum may be achieved, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    ({inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
     else:
-        st.warning(f'Quorum may not be met, {roster.quorum_required(currentvotingmembership)} required.  \n \
+        col1.warning(f'Quorum may not be met, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
-    col1, col2 = st.columns([4, 2])
     col1.caption('Polling Results')
     col1.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
     main_list = np.setdiff1d(roster.names(),df_poll['Name'].to_list())
     with col2.form(key='ADMIN Future Attendance', clear_on_submit=True):
+        st.write('Manual RSVP on behalf of attendee')
+        st.caption("Only those not yet RSVP'd will show in this drop down")
         st.selectbox(
-            label = 'Attendee',
+            label = 'Attendee Name',
             options = main_list,
             index=None,
             placeholder= "Select...",
             key='ADMINFutureAttendee')
         st.selectbox(
-            label = 'Do you plan on attending?',
+            label = 'Does the attendee plan on attending?',
             options = ['Yes, in person', 'Yes, virtually', 'No, not this time'],
             index=None,
             placeholder= "Select...",
