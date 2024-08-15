@@ -137,6 +137,7 @@ def showfutureattendance():
     else:
         col1.warning(f'Quorum may not be met, {roster.quorum_required(currentvotingmembership)} required.  \n \
                    (only {inattendance_votingmembers} of {currentvotingmembership} voting members are planning to attend)')
+    col1, col2 = st.columns([4, 2])
     col1.caption('Polling Results')
     col1.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
     main_list = np.setdiff1d(roster.names(),df_poll['Name'].to_list())
