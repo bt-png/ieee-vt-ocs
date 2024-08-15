@@ -80,13 +80,14 @@ def showroster(df):
     to_filter_columns = ('Name', 'Affiliation', 'Type', 'Status', 'E-mail')#st.multiselect("Filter dataframe on", df.columns)
     for column in to_filter_columns:
         user_cat_input = col2.multiselect(
-            f"Values for {column}",
+            f"Filter on {column}",
             _df[column].unique(),
             #default=list(df[column].unique())
         )
         if len(user_cat_input) > 0:
             _df = _df[_df[column].isin(user_cat_input)]
-    col1.dataframe(_df, hide_index=True, column_order=['Name', 'Affiliation', 'Type', 'Status', 'E-mail'])
+    Height = int(35.2 * (12 + 1))
+    col1.dataframe(_df, height=Height, hide_index=True, column_order=['Name', 'Affiliation', 'Type', 'Status', 'E-mail'], )
     col1.caption(f'Displaying {len(_df.index)} total rows')
     st.write('Send email to committee')
     col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
