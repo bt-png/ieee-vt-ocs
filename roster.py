@@ -26,6 +26,15 @@ def names():
     return df['Name']
 
 
+def searchname(name):
+    first, *middle, last = name.split()
+    if len(middle) > 0:
+        vals = ' '.join(middle)
+        return str(f'{last}, {first} {vals}')
+    else:
+        return str(f'{last}, {first}')
+
+
 def lastname(name):
     first, *middle, last = name.split()
     return last
@@ -48,6 +57,18 @@ def user_info(FullName):
     st.dataframe(df.loc[df['Name'] == FullName])
 
 
+def employertype():
+    return ['Agency', 'Constructor/Integrator', 'Consultant', 'Supplier/Manufacturer/Vendor']
+
+
+def user_employertype(FullName):
+    return df['Type'].loc[df['Name'] == FullName].values[0]
+
+
+def user_employer(FullName):
+    return df['Employer'].loc[df['Name'] == FullName].values[0]
+
+
 def user_email(FullName):
     return df['E-mail'].loc[df['Name'] == FullName].values[0]
 
@@ -63,15 +84,18 @@ def user_affiliations(FullName):
 
 def member_status(FullName):
     txt = df['Status'].loc[df['Name'] == FullName].values
-    if txt == 'V':
-        return 'Voting Member'
-    elif txt == 'P':
-        return 'Non-Voting Member'
-    elif txt == 'O':
-        return 'Non-Member'
-    elif txt == 'S':
-        return 'Staff Member'
-    else:
+    try:
+        if txt[0] == 'V':
+            return 'Voting Member'
+        elif txt[0] == 'P':
+            return 'Non-Voting Member'
+        elif txt[0] == 'O':
+            return 'Non-Member'
+        elif txt[0] == 'S':
+            return 'Staff Member'
+        else:
+            return 'Not Registered'
+    except Exception:
         return 'Not Registered'
 
 

@@ -208,12 +208,71 @@ def get_roster():
         return val
 
 
+def set_roster_update(name, key, new):
+    new_roster = get_roster()
+    st.write(f'Old value: {new_roster[name][key]}, New value: {new}')
+    doc_ref = db.collection('roster').document('contactlist')
+    dict_doc = doc_ref.get().to_dict()
+    if name in dict_doc.keys():
+        dict_doc[name].update({key: new})
+        doc_ref.set(dict_doc)
+    return None
+
+
+def changename(strname, name, strnewname, newname):
+    ### Roster
+    updatemade = False
+    doc_ref = db.collection('roster').document('contactlist')
+    dict_doc = doc_ref.get().to_dict()
+    if name in dict_doc.keys():
+        dict_doc[newname] = dict_doc[name]
+        dict_doc[newname].update({'Name': strnewname})
+        del dict_doc[name]
+        doc_ref.set(dict_doc)
+    ### Meetings
+    updatemade = False
+    doc_ref = db.collection('meetings').document('data')
+    dict_doc = doc_ref.get().to_dict()
+    for key in dict_doc:
+        if 'attendance' in dict_doc[key]:
+            if type(dict_doc[key]['attendance']) is dict:
+                if 'Voting Members' in dict_doc[key]['attendance']:
+                    if strname in dict_doc[key]['attendance']['Voting Members']['In Attendance']:
+                        dict_doc[key]['attendance']['Voting Members']['In Attendance'][strnewname] = dict_doc[key]['attendance']['Voting Members']['In Attendance'][strname]
+                        del dict_doc[key]['attendance']['Voting Members']['In Attendance'][strname]
+                        updatemade = True
+                if 'Other Attendees' in dict_doc[key]['attendance']:
+                    if strname in dict_doc[key]['attendance']['Other Attendees']:
+                        dict_doc[key]['attendance']['Other Attendees'][strnewname] = dict_doc[key]['attendance']['Other Attendees'][strname]
+                        del dict_doc[key]['attendance']['Other Attendees'][strname]
+                        updatemade = True
+    if updatemade:
+        doc_ref.set(dict_doc)
+    ### Future Attendance
+    updatemade = False
+    batch = db.batch()
+    doc_ref = db.collection('futureattendance')
+    for doc in doc_ref.stream():
+        if doc.id == strname:
+            updatemade = True
+            dict_doc = doc.to_dict()
+            dict_doc.update({'Attendee': strnewname})
+            doc_newref = db.collection('futureattendance').document(strnewname)
+            doc_newref.set(dict_doc)
+            batch.delete(doc.reference)
+    if updatemade:
+        batch.commit()
+    ### VOTING
+    
+    return None
+
+
 def archive_roster():
     doc_ref = db.collection('roster').document('contactlist')
     doc = doc_ref.get()
     if doc.exists:
         val = doc.to_dict()
-    doc_ref = db.collection('roster').document('contactlist_archive_20240529')
+    doc_ref = db.collection('roster').document('contactlist_archive_20240816')
     doc_ref.set(val)
 
 

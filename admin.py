@@ -49,7 +49,7 @@ def addnewPerson(df):
             Email = st.text_input('E-mail')
             Affiliation = st.text_input('Affiliation')
             Employer = st.text_input('Employer')
-            Type = st.selectbox('Type', options=['Agency', 'Constructor/Integrator', 'Consultant', 'Supplier/Manufacturer/Vendor'])      
+            Type = st.selectbox('Type', options=roster.employertype())      
             if st.form_submit_button('Submit'):
                 Status = 'O'
                 Name = FirstName + ' ' + LastName
@@ -252,6 +252,100 @@ def showattendance(df_roster):
         )
 
 
+def syncloginroster():
+    if st.session_state['username'] in ['btharp']:
+        st.markdown('---')
+        col1, col2 = st.columns([1,1])
+        with col1:
+            st.subheader('User Login Database Errors')
+            _df = pd.DataFrame(firestore.openconfig()['credentials']['usernames'])
+            _df = _df.filter(items=['name', 'email'], axis=0).transpose()
+            _df['Member Status'] = [roster.member_status(fn) for fn in _df['name']]
+            st.write('Users Not Registered')
+            st.dataframe(_df[_df['Member Status'] == 'Not Registered'])    
+            # fnlogin = st.selectbox(
+            #     label='Revise Information for:',
+            #     options=_df[_df['Member Status'] == 'Not Registered'].index,
+            #     index=None,
+            #     placeholder='Select..',
+            #     key='updateloginname'
+            # )
+            # if st.session_state['updateloginname'] is not None:
+            #     with st.form(key='updatelogin', clear_on_submit=True):
+            #         st.write('Update Login')
+            #         # changes = ['Affiliation', 'E-mail', 'Employer']
+            #         name = st.text_input('Name', placeholder='')                   
+            #         # email = st.text_input('E-mail', placeholder=roster.user_email(st.session_state['updaterostername']))
+            #         # employer = st.text_input('Employer', placeholder=roster.user_employer(st.session_state['updaterostername']))
+            #         if st.form_submit_button('Update'):
+            #             pass
+            #         #     updates = 0
+            #         #     if len(affiliate) > 0:
+            #         #         updates += 1
+            #         #         firestore.set_roster_update(roster.searchname(fn), 'Affiliation', affiliate)
+            #         #     if len(email) > 0:
+            #         #         updates += 1
+            #         #         firestore.set_roster_update(roster.searchname(fn), 'E-mail', email)
+            #         #     if len(employer) > 0:
+            #         #         updates += 1
+            #         #         firestore.set_roster_update(roster.searchname(fn), 'Employer', employer)
+            #         #     if updates > 0:
+            #         #         roster.refresh_df()
+        with col2:
+            st.subheader('Update Roster Database')
+            fnroster = st.selectbox(
+                label='Revise Information for:',
+                options=roster.df['Name'].to_list(),
+                index=None,
+                placeholder='Select..',
+                key='updaterostername'
+            )
+            if st.session_state['updaterostername'] is not None:
+                with st.form(key='updateroster', clear_on_submit=True):
+                    st.write('Update Roster')
+                    # changes = ['Affiliation', 'E-mail', 'Employer']
+                    affiliate = st.text_input('Affiliation', placeholder=roster.user_affiliations(st.session_state['updaterostername']))
+                    try:
+                        idx = roster.employertype().index(roster.user_employertype(st.session_state['updaterostername']))
+                    except Exception:
+                        idx = None
+                    companytype = st.selectbox(
+                        'Employer Type',
+                        options=roster.employertype(),
+                        index=idx) 
+                    #st.text_input('Employer Type', placeholder=roster.user_affiliations(st.session_state['updaterostername']))  
+                    email = st.text_input('E-mail', placeholder=roster.user_email(st.session_state['updaterostername']))
+                    employer = st.text_input('Employer', placeholder=roster.user_employer(st.session_state['updaterostername']))
+                    if st.session_state['username'] in ['btharp']:
+                        revisename = st.text_input('Database Saved Name!', placeholder=st.session_state['updaterostername'])
+                    if st.form_submit_button('Update'):
+                        updates = 0
+                        if len(affiliate) > 0:
+                            updates += 1
+                            firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'Affiliation', affiliate)
+                        if len(companytype) > 0:
+                            if companytype != roster.user_employertype(st.session_state['updaterostername']):
+                                updates += 1
+                                firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'Type', companytype)
+                        if len(email) > 0:
+                            updates += 1
+                            firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'E-mail', email)
+                        if len(employer) > 0:
+                            updates += 1
+                            firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'Employer', employer)
+                        if st.session_state['username'] in ['btharp']:
+                            if len(revisename) > 0:
+                                updates += 1
+                                if st.session_state['updaterostername'] != revisename:
+                                    firestore.changename(
+                                        st.session_state['updaterostername'], roster.searchname(st.session_state['updaterostername']),
+                                        revisename, roster.searchname(revisename)
+                                        )
+                        if updates > 0:
+                            roster.refresh_df.clear()
+                            roster.refresh_df()
+
+
 def run():
     st.header('Officers Administration Page')
     st.markdown('---')
@@ -262,6 +356,7 @@ def run():
     showroster(df_roster)
     addnewPerson(df_roster)
     # updateroster(df_roster)
+    syncloginroster()
     if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
         showattendance(df_roster)
         meetings.attendance_manual()
@@ -271,6 +366,6 @@ def run():
             meetingnumber = col1.number_input('Meeting Number')
             if col2.button('Save Attendance Record'):
                 roster.post_meeting_attendance(int(meetingnumber))
-            if False:
+            if True:
                 if st.button('Archive Roster'):
                     firestore.archive_roster()

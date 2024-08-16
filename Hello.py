@@ -22,7 +22,8 @@ import roster
 
 def officerlist():
     # Username of Officers
-    return ['btharp', 'schlick33', 'ucme4me', 'iccswusn', 'hriebeling']
+    # ['Recording Secretary-Brett Tharp', 'Vice Chair']
+    return ['btharp', 'schlick33', 'ucme4me', 'iccswusn', 'hriebeling', 'proder']
 
 
 def home():
