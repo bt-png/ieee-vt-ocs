@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import random
 from datetime import datetime
 
-testing = True
+testing = False
 
 
 def lastname(name):
@@ -68,6 +68,7 @@ def addnewPerson(df):
                 # st.dataframe(_df)
                 if firestore.set_roster(_df):
                     st.success('Saved')
+                    roster.refresh_df.clear()
                     roster.refresh_df()
 
 
