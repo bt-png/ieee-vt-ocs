@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import random
 from datetime import datetime
 
-testing = False
+testing = True
 
 
 def lastname(name):
