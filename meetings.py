@@ -50,15 +50,15 @@ def attendance_manual():
     notinattendance = list(set(fullroster).difference(listofmeetingattendees))
     notinattendance.sort(key=lastname)
     with st.form(key='Attendance', clear_on_submit=True):
-        st.selectbox(
+        name = st.selectbox(
             label='Mark in Attendance',
             options=notinattendance,
             index=None,
             placeholder='Select a Name',
             key='mark_attendance_manual')
         if st.form_submit_button(label='Record', use_container_width=False):
-            firestore.mark_in_attendance(st.session_state.mark_attendance_manual)
-            st.caption(f'Attendance for {st.session_state.mark_attendance_manual} has been recorded as a {roster.member_status(st.session_state.mark_attendance_manual)}')
+            firestore.mark_in_attendance(name)
+            st.caption(f'Attendance for {name} has been recorded as a {roster.member_status(name)}')
     #if st.button('Update Attendance'):
     #    firestore.in_attendance.clear()
     #    #attendance_status()
