@@ -349,10 +349,12 @@ def syncloginroster():
 
 def run():
     st.header('Officers Administration Page')
-    st.markdown('---')
-    showfutureattendance()
-    st.markdown('---')
-    shownominations()
+    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+        st.markdown('---')
+        showfutureattendance()
+    if False:
+        st.markdown('---')
+        shownominations()
     df_roster = roster.df
     showroster(df_roster)
     addnewPerson(df_roster)
