@@ -11,7 +11,7 @@ df = pd.DataFrame.from_dict(data=roster_val, orient='index')
 df.sort_values(by='Last Name', ascending=True, inplace=True)
 df.reset_index(drop=True, inplace=True)
 
-@st.cache_data
+# @st.cache_data
 def refresh_df():
     roster_val = firestore.get_roster()
     _df = pd.DataFrame.from_dict(data=roster_val, orient='index')
@@ -101,9 +101,8 @@ def member_status(FullName):
 
 def meeting_attendance_record(FullName):
     allmeetings = meetings.schedule()
-    allmeetings.drop(allmeetings.tail(1).index, inplace=True)
+    allmeetings.drop(allmeetings[~allmeetings['recorded']].index, inplace=True)
     allmeetings['Attended'] = False
-    #allmeetings['Attended'] = allmeetings['number']
     txt = df['meeting'].loc[df['Name'] == FullName].copy()
     txt.reset_index(drop=True, inplace=True)
     _df = pd.DataFrame.from_dict(txt[0], orient='index')
@@ -120,6 +119,7 @@ def meeting_attendance_record(FullName):
     _df = _df.transpose()
     return _df
 
+
 def list_to_string(list):
     str = ''
     for val in list:
@@ -129,6 +129,7 @@ def list_to_string(list):
         except Exception:
             return str
     return str[:-2]
+
 
 def contact_list_votingmember():
     email = df[df['Status'] == 'V']['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
@@ -164,6 +165,48 @@ def quorum_required(total_voting):
 
 def meets_quorum(in_attendance, total_voting):
     return in_attendance >= quorum_required(total_voting)
+
+
+def postUpdatedMemberStatus():
+    allmeetings = meetings.schedule()
+    allmeetings.drop(allmeetings[~allmeetings['recorded']].index, inplace=True)
+    meetinglist = allmeetings['number'].tail(4).tolist()
+    status_dict = {}
+    for idx, row in df.iterrows():
+        if isinstance(row.loc['meeting'], dict):
+            attendancelist = row.loc['meeting'].keys()
+            meetingsattended = [int(val) in meetinglist for val in attendancelist].count(True)
+            NewStatus = 'V' if meetingsattended >= 2 else 'P'
+            if NewStatus != row.loc['Status'] and row.loc['Status'] != 'S':
+                # if NewStatus == 'P' and row.loc['Status'] == 'O':
+                #      st.text(attendancelist)
+                # st.text(row.loc['Name'] + ' changes status from ' + row.loc['Status'] + ' to ' + NewStatus)
+                status_dict[row.loc['Name']] = {'Previous Status': row.loc['Status'], 'New Status': NewStatus}
+                # st.text(status_dict)
+                # _df_status = pd.concat([_df_status, pd.DataFrame.from_dict(new_row)], ignore_index=True)
+        else:
+            if row.loc['Status'] != 'O':
+                st.text(row.loc['Name'])
+                st.text(row.loc['Status'])
+    df_status = pd.DataFrame.from_dict(status_dict, orient='index')
+    if df_status.empty:
+        st.write('No updates to membership status required.')
+    else:
+        st.dataframe(df_status)
+        if st.button('Update Records'):
+            postUpdateMembershipStatusToRoster(df_status)
+            st.rerun()
+
+
+def postUpdateMembershipStatusToRoster(dfstatusrevisions):
+    dfstatusrevisions = dfstatusrevisions.drop(['Previous Status'], axis=1)
+    dfstatusrevisions.rename(columns={'New Status': 'Status'}, inplace=True)
+    roster_val = firestore.get_roster()
+    df_dict = pd.DataFrame.from_dict(data=roster_val, orient='index')
+    df_dict['Index'] = df_dict['Name']
+    df_dict = df_dict.set_index('Index')
+    df_dict.update(dfstatusrevisions)
+    return firestore.set_roster(df_dict)
 
 
 def postMeetingAttendanceToRoster(attendeelist, meetingnumber: int):
@@ -237,5 +280,3 @@ def post_meeting_attendance(activeMeeting):
         st.warning('User data posted to schedule, but not users.')
     else:
         st.warning('No data was posted.')
-    # firestore.in_attendance.clear()
-

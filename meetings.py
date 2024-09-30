@@ -73,14 +73,14 @@ def next_meeting_date():
         return datetime.date(datetime.today())
     else:
         df = schedule()
-        return datetime.date(df.tail(1).start.tolist()[0])
+        return datetime.date(df[~df['recorded']].head(1).start.tolist()[0])
 
 
 def show_upcoming(dfinput):
     df = dfinput.copy()
     df['time'] = df['start']
     st.dataframe(
-        data=df.tail(1),
+        data=df[~df['recorded']],
         hide_index=True,
         column_order=['number', 'location', 'type', 'start'],
         column_config={
@@ -98,9 +98,8 @@ def show_upcoming(dfinput):
 
 def show_recent(dfinput):
     df = dfinput.copy()
-    df.drop(df.tail(1).index, inplace=True)
     st.dataframe(
-        data=df.tail(4), 
+        data=df[df['recorded']].tail(6), 
         hide_index=True, 
         column_order=['number', 'location', 'start'],
         column_config={

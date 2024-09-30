@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import random
 from datetime import datetime
 
-testing = True
+testing = False
 
 
 def lastname(name):
@@ -369,6 +369,7 @@ def run():
             meetingnumber = col1.number_input('Meeting Number')
             if col2.button('Save Attendance Record'):
                 roster.post_meeting_attendance(int(meetingnumber))
+            roster.postUpdatedMemberStatus()
             if True:
                 if st.button('Archive Roster'):
                     firestore.archive_roster()
