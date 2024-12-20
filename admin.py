@@ -68,7 +68,7 @@ def addnewPerson(df):
                 # st.dataframe(_df)
                 if firestore.set_roster(_df):
                     st.success('Saved')
-                    roster.refresh_df.clear()
+                    # roster.refresh_df.clear()
                     roster.refresh_df()
 
 
@@ -90,6 +90,10 @@ def showroster(df):
     Height = int(35.2 * (12 + 1))
     col1.dataframe(_df, height=Height, hide_index=True, column_order=['Name', 'Affiliation', 'Type', 'Status', 'E-mail'], )
     col1.caption(f'Displaying {len(_df.index)} total rows')
+    col1, col2, col3 = st.columns([8, 8, 8])
+    if col2.button(label='Refresh Roster List'):
+        roster.refresh_df()
+        st.rerun()
     st.write('Send email to committee')
     col1, col2, col3, col4 = st.columns([.04, .18, .18, .60])
     email_votingmembers = roster.contact_list_votingmember()
@@ -330,7 +334,10 @@ def syncloginroster():
                                 firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'Type', companytype)
                         if len(email) > 0:
                             updates += 1
-                            firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'E-mail', email)
+                            if email == " ":
+                                firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'E-mail', np.nan)
+                            else:
+                                firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'E-mail', email)
                         if len(employer) > 0:
                             updates += 1
                             firestore.set_roster_update(roster.searchname(st.session_state['updaterostername']), 'Employer', employer)
@@ -342,9 +349,9 @@ def syncloginroster():
                                         st.session_state['updaterostername'], roster.searchname(st.session_state['updaterostername']),
                                         revisename, roster.searchname(revisename)
                                         )
-                        if updates > 0:
-                            roster.refresh_df.clear()
-                            roster.refresh_df()
+                        # if updates > 0:
+                            # roster.refresh_df.clear()
+                            # roster.refresh_df()
 
 
 def run():
