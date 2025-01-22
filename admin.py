@@ -356,9 +356,9 @@ def syncloginroster():
 
 def run():
     st.header('Officers Administration Page')
-    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
-        st.markdown('---')
-        showfutureattendance()
+    #if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+       # st.markdown('---')
+    #    showfutureattendance()
     if False:
         st.markdown('---')
         shownominations()
