@@ -257,7 +257,7 @@ def postMeetingAttendanceToSchedule(attendeelist, meetingnumber: int):
             }
             )
     df_r = pd.DataFrame.from_dict(data=dict_attendance, orient='index')
-    return firestore.post_schedule(df_r)
+    return firestore.post_schedule_meeting_update(df_r, meetingnumber)
 
 
 def post_meeting_attendance(activeMeeting):

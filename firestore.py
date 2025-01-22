@@ -184,8 +184,12 @@ def post_schedule(dfinput):
     df_dict = df.transpose().to_dict()
     try:
         doc_ref = db.collection('meetings').document('data')
-        doc_ref.set(df_dict)
-        return True
+        doc = doc_ref.get()
+        if doc.exists:
+            doc_ref.set(df_dict)
+            return True
+        else:
+            st.write('doc does not exist')
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
         return False
@@ -334,3 +338,26 @@ def in_attendance():
             new_entry = pd.DataFrame([{'Name': doc.id, 'Status': roster.member_status(doc.id)}])
             df = pd.concat([df,new_entry], ignore_index=True)
     return df
+
+def post_schedule_meeting_update(dfinput, meetingnumber):
+    ref_index = 'Meeting ' + str(meetingnumber)
+    df = dfinput.copy()
+    df['Index'] = 'Meeting ' + df['number'].astype(str)
+    df = df.set_index('Index')
+    df_dict = df.transpose().to_dict()
+    try:
+        doc_ref = db.collection('meetings').document('data')
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            if 'attendance' not in val[ref_index]:
+                val[ref_index]['attendance'] = df_dict[ref_index]['attendance']
+                val[ref_index]['recorded'] = True
+                st.write(val[ref_index]['number'])
+            doc_ref.set(val)
+            return True
+        else:
+            st.write('doc does not exist')
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+        return False
