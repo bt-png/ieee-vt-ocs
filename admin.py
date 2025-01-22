@@ -257,6 +257,46 @@ def showattendance(df_roster):
         )
 
 
+def showMeetingAttendance():
+    if st.session_state['username'] in ['btharp']:
+        st.markdown('---')
+        st.subheader('Meeting Attendance')
+        _df = meetings.schedule()
+        _df.drop(_df[~_df['recorded']].index, inplace=True)
+        meetingID = st.selectbox(
+            label='Meeting Number',
+            options=_df['number'].values, 
+        )
+        attendance = _df[_df['number']==meetingID]['attendance'].values[0]
+        col1, col2 = st.columns([1,1])
+        with col1:
+            # st.write(attendance.get('Voting Members').get('In Attendance'))
+            st.subheader('Voting Membership Attendance')
+            _dfMembersInAttendance = pd.DataFrame(
+                data=attendance.get('Voting Members').get('In Attendance').items(),
+                columns=['Surname Ordered', 'In Attendance'])
+            _dfMembersInAttendance['In Attendance'] = ['Yes' if att else 'No' for att in _dfMembersInAttendance['In Attendance']]
+            _dfMembersInAttendance['sort'] = [roster.searchname(name) for name in _dfMembersInAttendance['Surname Ordered']]
+            _dfMembersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfMembersInAttendance['Surname Ordered']]
+            _dfMembersInAttendance.sort_values(by='sort', inplace=True)
+            st.dataframe(
+                data=_dfMembersInAttendance,
+                column_order=['Surname Ordered', 'Affiliations', 'In Attendance'],
+                hide_index=True)
+        with col2:
+            st.subheader('Additional Attendees')
+            _dfOthersInAttendance = pd.DataFrame(
+                data=attendance.get('Other Attendees'),
+                columns=['Surname Ordered'])
+            _dfOthersInAttendance['sort'] = [roster.searchname(name) for name in _dfOthersInAttendance['Surname Ordered']]
+            _dfOthersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfOthersInAttendance['Surname Ordered']]
+            _dfOthersInAttendance.sort_values(by='sort', inplace=True)
+            st.dataframe(
+                data=_dfOthersInAttendance,
+                column_order=['Surname Ordered', 'Affiliations'],
+                hide_index=True)
+
+
 def syncloginroster():
     if st.session_state['username'] in ['btharp']:
         st.markdown('---')
@@ -376,6 +416,7 @@ def run():
             if col2.button('Save Attendance Record'):
                 roster.post_meeting_attendance(int(meetingnumber))
             roster.postUpdatedMemberStatus()
-            if True:
+            if testing:
                 if st.button('Archive Roster'):
                     firestore.archive_roster()
+    showMeetingAttendance()
