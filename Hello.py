@@ -18,6 +18,7 @@ import workinggroups as wg
 import officers
 import admin
 import roster
+import wgpages
 
 
 def officerlist():
@@ -119,6 +120,10 @@ def officerpage():
     admin.run()
 
 
+def workinggrouppages():
+    wgpages.run()
+
+
 def viewmeetings():
     col1, col2, col3 = st.columns([1, 6, 1])
     with col2:
@@ -143,6 +148,8 @@ else:
         # Logged out
         st.session_state.clear()
         st.rerun()
+    if 'WG_page' not in st.session_state:
+        st.session_state['WG_page'] = False
     # ---------------------------------------------------
     # Logged in -----------------------------------------
     # ---------------------------------------------------
@@ -151,9 +158,8 @@ else:
         st.sidebar.checkbox(label='Show Officer Page', key='admin_page')
     else:
         st.session_state['admin_page'] = False
+    # Show WG Pages Registered
     # Show user information
-   
-    #st.sidebar.header('Hello!') # ' + roster.firstName(st.session_state.user_info) + '!')
 
     with st.sidebar.expander('Update Login', expanded=False):
         st_auth.resetpassword(auth, config)
@@ -162,6 +168,8 @@ else:
 
     if st.session_state['admin_page']:
         officerpage()
+    elif st.session_state['WG_page']:
+        workinggrouppages()
     else:
         memberwelcome()
         meetingattendance()
