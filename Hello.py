@@ -63,7 +63,9 @@ def memberwelcome():
                 st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
         except Exception:
                 st.warning('Your attendance records could not be matched. Please contact your committee officers to update the roster.')
+                return False
     st.markdown('''---''')
+    return True
 
 
 def meetingattendance():
@@ -153,21 +155,22 @@ else:
         st.sidebar.checkbox(label='Show Officer Page', key='admin_page')
     else:
         st.session_state['admin_page'] = False
-        # Show user information
+       
+    if st.session_state['admin_page']:
+        officerpage()
+    else:
+        if memberwelcome():
+                meetingattendance()
+                pollfutureattendance()
+                nominations()
+                voting()
+                workinggrouppages()
+                viewmeetings()
+                viewworkinggroups()
+    # Show user information
     with st.sidebar.expander('Update Login', expanded=False):
         st_auth.resetpassword(auth, config)
         #st_auth.updateuser(auth, config)
     st_auth.logout(auth)
-    if st.session_state['admin_page']:
-        officerpage()
-    else:
-        memberwelcome()
-        meetingattendance()
-        pollfutureattendance()
-        nominations()
-        voting()
-        workinggrouppages()
-        viewmeetings()
-        viewworkinggroups()
 st.markdown('''---''')
 officers.run()
