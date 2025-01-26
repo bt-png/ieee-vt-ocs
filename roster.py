@@ -22,7 +22,7 @@ def refresh_df():
 
 
 # @st.cache_data
-def names():
+def member_names():
     return df['Name']
 
 
@@ -129,6 +129,11 @@ def list_to_string(list):
         except Exception:
             return str
     return str[:-2]
+
+
+def contact_list(names):
+    email = df[df['Name'].isin(names)]['E-mail'].loc[df['E-mail'].notnull()].to_numpy()
+    return list_to_string(email)
 
 
 def contact_list_votingmember():

@@ -1,5 +1,12 @@
 import streamlit as st
 
+
+def officerlist():
+    # Username of Officers
+    # ['Recording Secretary-Brett Tharp', 'Vice Chair']
+    return ['btharp', 'schlick33', 'ucme4me', 'iccswusn', 'hriebeling', 'proder']
+
+
 def run():
     st.caption(
                 "Chairperson - Steve Norton - [stephen-norton@ieee.org](mailto:stephen-norton@ieee.org)  \n"

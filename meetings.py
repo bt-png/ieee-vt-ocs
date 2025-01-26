@@ -45,7 +45,7 @@ def attendance_statement():
 
 def attendance_manual():
     df_attendance = firestore.in_attendance()
-    fullroster = roster.names()
+    fullroster = roster.member_names()
     listofmeetingattendees = df_attendance['Name'].tolist()
     notinattendance = list(set(fullroster).difference(listofmeetingattendees))
     notinattendance.sort(key=lastname)

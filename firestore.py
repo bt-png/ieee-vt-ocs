@@ -20,6 +20,7 @@ def openconfig():
     conf = doc.to_dict()
     return conf
 
+
 def saveconfig(conf):
     try:
         doc_ref = db.collection('roster').document('login')
@@ -39,6 +40,7 @@ def get_existing_attendancepoll(fullname):
         st.session_state.auth_warning = 'Error: Please try again later'
         return ''
 
+
 def post_attendancepoll(fullname, val):
     try:
         doc_ref = db.collection('futureattendance').document(fullname)
@@ -49,6 +51,7 @@ def post_attendancepoll(fullname, val):
         })
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+
 
 def future_attendee_list():
     import roster
@@ -67,6 +70,7 @@ def future_attendee_list():
         df = pd.concat([df,new_entry], ignore_index=True)
     return df
 
+
 #---------nominations----------------
 def get_existing_nomination(WG):
     try:
@@ -77,6 +81,7 @@ def get_existing_nomination(WG):
         return ''
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+
 
 def get_nominations(WG):
     try:
@@ -95,6 +100,7 @@ def get_nominations(WG):
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
 
+
 def post_nominations(df, WG):
     df['Index'] = df['Current Nominees']
     df = df.set_index('Index')
@@ -104,6 +110,7 @@ def post_nominations(df, WG):
         doc_ref.set(df_dict)
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+
 
 def submit_nomination(name, WG):
     #get_existing_nomination.clear()
@@ -118,6 +125,7 @@ def submit_nomination(name, WG):
     post_nominations(df, WG)
     return df
 
+
 def post_nominee(df, name):
     if df.empty:
         new_record = pd.DataFrame([{'Current Nominees':name, 'count':1}])
@@ -130,6 +138,7 @@ def post_nominee(df, name):
             df = pd.concat([df, new_record], ignore_index=True)
     return df
   
+
 def remove_nominee(df, name):
     if not(df.empty) and name in df['Current Nominees'].values:
         i = df[df['Current Nominees'] == name].index[0]
@@ -138,6 +147,7 @@ def remove_nominee(df, name):
         else:
             df.loc[df['Current Nominees'] == name, 'count'] -= 1
     return df
+
 
 def submit_nomination_ind(name, WG):
     try:
@@ -161,6 +171,113 @@ def submit_nomination_ind(name, WG):
             })
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
+
+
+#---------working groups----------
+def wg_get(WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            return val
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def wg_register(name, WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            if name not in val['Volunteers']:
+                val['Volunteers'].append(name)
+                doc_ref.set(val)
+                return True
+        else:
+            doc_ref.set({
+                'Volunteers': [name],
+                'WG Chair': [],
+                'Next Meeting': ''
+            })
+            return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def wg_unregister(name, WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            if name in val['Volunteers']:
+                val['Volunteers'].remove(name)
+                doc_ref.set(val)
+                return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def wg_assign_chair(name, WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            if 'WG Chair' in val:
+                val['WG Chair'].append(name)
+            else:
+                val['WG Chair'] = [name]
+            doc_ref.set(val)
+            return True
+        else:
+            doc_ref.set({
+                'Volunteers': [],
+                'WG Chair': [name],
+                'Next Meeting': ''
+            })
+            return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def wg_unassign_chair(name, WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            if name in val['WG Chair']:
+                val['WG Chair'].remove(name)
+                doc_ref.set(val)
+                return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def wg_push_schedule(dateval, WG):
+    try:
+        doc_ref = db.collection('WG_Roster').document(WG)
+        doc = doc_ref.get()
+        if doc.exists:
+            val = doc.to_dict()
+            val['Next Meeting'] = dateval
+            st.write(dateval)
+            st.write(type(dateval))
+            doc_ref.set(val)
+            return True
+        else:
+            doc_ref.set({
+                'Volunteers': [],
+                'WG Chair': [],
+                'Next Meeting': ''
+            })
+            return True
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
 
 #---------schedule----------------
 # @st.cache_data
@@ -213,11 +330,10 @@ def get_roster():
 
 
 def set_roster_update(name, key, new):
-    new_roster = get_roster()
-    st.write(f'Old value: {new_roster[name][key]}, New value: {new}')
     doc_ref = db.collection('roster').document('contactlist')
     dict_doc = doc_ref.get().to_dict()
     if name in dict_doc.keys():
+        st.write(f'Old value: {dict_doc[name][key]}, New value: {new}')
         dict_doc[name].update({key: new})
         doc_ref.set(dict_doc)
     return None
