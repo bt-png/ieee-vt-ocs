@@ -70,10 +70,8 @@ def user_employer(FullName):
 
 
 def user_email(FullName):
-    try:
-        return df['E-mail'].loc[df['Name'] == FullName].values[0]
-    except Exception:
-        return
+    return df['E-mail'].loc[df['Name'] == FullName].values[0]
+
 
 def firstName(FullName):
     return df['First Name'].loc[df['Name'] == FullName].values[0]
