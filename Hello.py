@@ -58,7 +58,7 @@ def memberwelcome():
             st.caption('Per our Policies and Procedures, voting membership is based on attendance of 2 of the last 4 committee meetings and participating in votes.')
             col1,col2,col3 = st.columns([1,4,4])
             col2.dataframe(roster.meeting_attendance_record(st.session_state.user_info), hide_index=False)
-            st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state["name"]} \
+            st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state["name"])} \
                 with {roster.user_affiliations(st.session_state.user_info)} as your affiliation.')
             st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
         except Exception:
