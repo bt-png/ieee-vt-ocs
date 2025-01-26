@@ -60,7 +60,8 @@ def memberwelcome():
                 col2.dataframe(roster.meeting_attendance_record(st.session_state.user_info), hide_index=False)
         except Exception:
                 pass
-        st.write(f'Our records indicate your preferred contact email address is {roster.user_email(st.session_state.user_info)} \
+        tmp_email = roster.user_email(st.session_state.user_info)
+        st.write(f'Our records indicate your preferred contact email address is {tmp_email} \
                  with {roster.user_affiliations(st.session_state.user_info)} as your affiliation.')
         st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
     st.markdown('''---''')
