@@ -62,7 +62,7 @@ def memberwelcome():
                 with {roster.user_affiliations(st.session_state.user_info)} as your affiliation.')
                 st.caption('If any of this information is incorrect, please contact your committee officers. They will help update the roster.')
         except Exception:
-                st.caption('Your attendance records could not be matched. Please contact your committee officers to update the roster.')
+                st.warning('Your attendance records could not be matched. Please contact your committee officers to update the roster.')
         
     st.markdown('''---''')
 
