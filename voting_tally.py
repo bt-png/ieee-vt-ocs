@@ -80,7 +80,7 @@ def nominations():
             #st.text_input(label='WG Chair Nominee Full Name', value=existing_vote, key='P1628_name')
             st.selectbox(
                 label = 'WG Chair Nominee Full Name',
-                options = roster.names(),
+                options = roster.member_names(),
                 index=None,
                 placeholder= "Select nominee..." if existing_vote == '' else existing_vote,
                 key='P1628_name')
@@ -107,7 +107,7 @@ def nominations():
             existing_vote = firestore.get_existing_nomination('P3357')
             st.selectbox(
                 label = 'WG Chair Nominee Full Name',
-                options = roster.names(),
+                options = roster.member_names(),
                 index=None,
                 placeholder= "Select nominee..." if existing_vote == '' else existing_vote,
                 key='P3357_name')
@@ -133,7 +133,7 @@ def nominations():
             existing_vote = firestore.get_existing_nomination('P3425')
             st.selectbox(
                 label = 'WG Chair Nominee Full Name',
-                options = roster.names(),
+                options = roster.member_names(),
                 index=None,
                 placeholder= "Select nominee..." if existing_vote == '' else existing_vote,
                 key='P3425_name')

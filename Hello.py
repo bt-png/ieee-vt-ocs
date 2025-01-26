@@ -16,14 +16,10 @@ import voting_tally as vt
 import meetings
 import workinggroups as wg
 import officers
+from officers import officerlist
 import admin
 import roster
-
-
-def officerlist():
-    # Username of Officers
-    # ['Recording Secretary-Brett Tharp', 'Vice Chair']
-    return ['btharp', 'schlick33', 'ucme4me', 'iccswusn', 'hriebeling', 'proder']
+import wgpages
 
 
 def home():
@@ -117,6 +113,10 @@ def voting():
 
 def officerpage():
     admin.run()
+ 
+
+def workinggrouppages():
+    wgpages.run()
 
 
 def viewmeetings():
@@ -143,6 +143,8 @@ else:
         # Logged out
         st.session_state.clear()
         st.rerun()
+    if 'WG_page' not in st.session_state:
+        st.session_state['WG_page'] = False
     # ---------------------------------------------------
     # Logged in -----------------------------------------
     # ---------------------------------------------------
@@ -151,15 +153,6 @@ else:
         st.sidebar.checkbox(label='Show Officer Page', key='admin_page')
     else:
         st.session_state['admin_page'] = False
-    # Show user information
-   
-    #st.sidebar.header('Hello!') # ' + roster.firstName(st.session_state.user_info) + '!')
-
-    with st.sidebar.expander('Update Login', expanded=False):
-        st_auth.resetpassword(auth, config)
-        #st_auth.updateuser(auth, config)
-    st_auth.logout(auth)
-
     if st.session_state['admin_page']:
         officerpage()
     else:
@@ -168,7 +161,15 @@ else:
         pollfutureattendance()
         nominations()
         voting()
+        workinggrouppages()
         viewmeetings()
         viewworkinggroups()
+
+    # Show user information
+    with st.sidebar.expander('Update Login', expanded=False):
+        st_auth.resetpassword(auth, config)
+        #st_auth.updateuser(auth, config)
+    st_auth.logout(auth)
+
 st.markdown('''---''')
 officers.run()

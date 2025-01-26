@@ -8,6 +8,8 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import random
 from datetime import datetime
+from wgpages import runAdmin
+
 
 testing = False
 
@@ -147,7 +149,7 @@ def showfutureattendance():
     col1, col2 = st.columns([4, 2])
     col1.caption('Polling Results')
     col1.dataframe(df_poll, hide_index=True, column_order=['Name', 'Attendance Poll', 'Status'])
-    main_list = np.setdiff1d(roster.names(),df_poll['Name'].to_list())
+    main_list = np.setdiff1d(roster.member_names(),df_poll['Name'].to_list())
     with col2.form(key='ADMIN Future Attendance', clear_on_submit=True):
         st.write('Manual RSVP on behalf of attendee')
         st.caption("Only those not yet RSVP'd will show in this drop down")
@@ -257,10 +259,26 @@ def showattendance(df_roster):
         )
 
 
-def showMeetingAttendance():
-    if st.session_state['username'] in ['btharp']:
-        st.markdown('---')
-        st.subheader('Meeting Attendance')
+def showMeetingAttendanceActive(df_roster):
+    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+        showattendance(df_roster)
+        meetings.attendance_manual()
+        # Show Save Attendance Link
+        if st.session_state['username'] in ['btharp']:
+            with st.expander(label='Record Meeting Attendance', expanded=False):
+                col1, col2 = st.columns([1,1])
+                meetingnumber = col1.number_input('Meeting Number')
+                if col2.button('Save Attendance Record'):
+                    roster.post_meeting_attendance(int(meetingnumber))
+                roster.postUpdatedMemberStatus()
+                if testing:
+                    if st.button('Archive Roster'):
+                        firestore.archive_roster()
+
+
+def showMeetingAttendanceRecord():
+    # if st.session_state['username'] in ['btharp']:
+    with st.expander(label='View Prior Meeting Attendance', expanded=False):
         _df = meetings.schedule()
         _df.drop(_df[~_df['recorded']].index, inplace=True)
         meetingID = st.selectbox(
@@ -295,6 +313,20 @@ def showMeetingAttendance():
                 data=_dfOthersInAttendance,
                 column_order=['Surname Ordered', 'Affiliations'],
                 hide_index=True)
+
+
+def meetingAttendance(df_roster):
+    st.markdown('---')
+    st.subheader('Meeting Attendance')
+    showMeetingAttendanceActive(df_roster)
+    showMeetingAttendanceRecord()
+
+
+def showWorkingGroupRoster(df_roster):
+    st.markdown('---')
+    st.subheader('Working Groups')
+    with st.expander(label='View Working Group Rosters', expanded=False):
+        runAdmin()
 
 
 def syncloginroster():
@@ -406,17 +438,5 @@ def run():
     showroster(df_roster)
     addnewPerson(df_roster)
     syncloginroster()
-    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
-        showattendance(df_roster)
-        meetings.attendance_manual()
-        # Show Save Attendance Link
-        if st.session_state['username'] in ['btharp']:
-            col1, col2 = st.columns([1,1])
-            meetingnumber = col1.number_input('Meeting Number')
-            if col2.button('Save Attendance Record'):
-                roster.post_meeting_attendance(int(meetingnumber))
-            roster.postUpdatedMemberStatus()
-            if testing:
-                if st.button('Archive Roster'):
-                    firestore.archive_roster()
-    showMeetingAttendance()
+    meetingAttendance(df_roster)
+    showWorkingGroupRoster(df_roster)

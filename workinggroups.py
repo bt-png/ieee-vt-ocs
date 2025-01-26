@@ -5,7 +5,6 @@ def run():
     st.subheader('Working Groups')
     linkstruct = 'https://ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&contentType=standards&queryText='
     dfPARS = PARS()
-    dfPARS = dfPARS[dfPARS['Project Status'] == 'Draft Development']
     dfPARS['PARSLink'] = linkstruct + dfPARS['Project Number'].astype(str)
     dfSt = Standards()
     dfSt['STDLink'] = linkstruct + dfSt['Standard Number'].astype(str)
@@ -50,6 +49,7 @@ def run():
 @st.cache_data
 def PARS():
     df = pd.read_csv('ParsReport.CSV')
+    df = df[df['Project Status'] == 'Draft Development']
     return df
 
 @st.cache_data
