@@ -258,7 +258,7 @@ def generateContent(val):
         email_list = contact_list(df_wg[val]['WG Chair'])
         if len(email_list) > 0:
             col1.link_button(label='Email WG Chair', url=f"mailto:?to={email_list}&subject=IEEE VT/OCS WG {val}: ")
-        if col2.button(label='Rescind', key='wg_btn_rescind_'+val):
+        if col2.button(label='Rescind Registration', key='wg_btn_rescind_'+val):
             remove_user(val, st.session_state["name"])
     else:
         register(val)
