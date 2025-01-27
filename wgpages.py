@@ -155,7 +155,7 @@ def rescindchair_user(wg, user):
 
 
 def register(val):
-    if st.button(label='Volunteer to Contribute', key='wg_register_btn_'+val):
+    if st.button(label='Self-Register to Participate', key='wg_register_btn_'+val):
         register_user(val, st.session_state['name'])
 
 
