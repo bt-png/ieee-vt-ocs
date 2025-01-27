@@ -224,9 +224,10 @@ def show_wgroster(wg):
         data=df,
         column_order=['Volunteers', 'Affiliations'],
         hide_index=True)
-    email_list = contact_list(df_wg[wg]['Volunteers'])
-    if len(email_list) > 0:
-        st.link_button(label='Email WG Members', url=f"mailto:?bcc={email_list}&subject=IEEE VT/OCS WG {wg}: ")
+    if 'Volunteers' in df_wg[wg]:
+        email_list = contact_list(df_wg[wg]['Volunteers'])
+        if len(email_list) > 0:
+            st.link_button(label='Email WG Members', url=f"mailto:?bcc={email_list}&subject=IEEE VT/OCS WG {wg}: ")
         
 
 def wgchair_view(wg):
