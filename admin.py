@@ -102,12 +102,12 @@ def showroster(df):
     email_nonvotingmembers =roster.contact_list_notvotingmember()
     email_activemembers =roster.contact_list_activemember()
     email_all =roster.contact_list_all()
-    col2.link_button(label='Voting Members', url=f"mailto:?to={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
-    col3.link_button(label='Active Members', url=f"mailto:?to={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
+    col2.link_button(label='Voting Members', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
+    col3.link_button(label='Active Members', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
     if col4.button('All Members'):
-        #col3.link_button(label='Try Email', url=f"mailto:?to={email_all}subject=IEEE VT/OCS Standards Committee: ")
+        #col3.link_button(label='Try Email', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_all}subject=IEEE VT/OCS Standards Committee: ")
         st.warning('There are too many addressess to create an email automatically. Copy the list below.')
-        st.link_button(label='Blank Email', url=f"mailto:?subject=IEEE VT/OCS Standards Committee: ")
+        st.link_button(label='Blank Email', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&subject=IEEE VT/OCS Standards Committee: ")
         st.caption('Voting Members')
         Path = f'''{email_votingmembers}'''
         st.code(Path, language="python")
