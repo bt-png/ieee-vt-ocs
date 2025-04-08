@@ -233,8 +233,6 @@ def show_wgroster(val):
 
 def wgchair_view(val):
     show_wgroster(val)
-    # show_wgschedule(wg)
-    # update_wgschedule(wg)
     updatewgRoster(val)
 
 
