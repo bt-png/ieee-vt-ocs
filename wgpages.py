@@ -185,7 +185,7 @@ def assignchair(wg, user):
 
 
 def updatewgRoster(wg):
-    if st.session_state['username'] in officerlist():
+    if (ischair(val, st.session_state["name"])) or (st.session_state['username'] in officerlist()):
         selectuser = st.selectbox(
                 label='Update WG Roster:',
                 options=member_names().to_list(),
@@ -199,8 +199,9 @@ def updatewgRoster(wg):
                 registersomeone(wg, selectuser)
             with col2:
                 removesomeone(wg, selectuser)
-            with col3:
-                assignchair(wg, selectuser)
+            if st.session_state['username'] in officerlist():
+                with col3:
+                    assignchair(wg, selectuser)
 
 
 def wgroster(wg):
