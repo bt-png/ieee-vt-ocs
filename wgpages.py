@@ -38,16 +38,16 @@ def ischair(val, user):
         return True
 
 
-def wgchair(wg):
-    if df_wg[wg] is not None:
-        return df_wg[wg]['WG Chair']
+def wgchair(val):
+    if df_wg[val] is not None:
+        return df_wg[val]['WG Chair']
     return ['Not Assigned']
 
 
-def wgmeeting(wg):
-    if df_wg[wg] is not None:
-        if 'Next Meeting' in df_wg[wg]:
-            return df_wg[wg]['Next Meeting']
+def wgmeeting(val):
+    if df_wg[val] is not None:
+        if 'Next Meeting' in df_wg[val]:
+            return df_wg[val]['Next Meeting']
     return 'Not Assigned'
 
 
@@ -72,7 +72,7 @@ def generateCheckbox(val):
 def runSidebar():
     with st.sidebar:
         st.write('WG Pages')
-        [generateCheckbox(wg) for wg in get_wglist()]
+        [generateCheckbox(val) for val in get_wglist()]
 
 
 @st.fragment
@@ -102,26 +102,26 @@ def showtitle(val):
 #         st.write('Next meeting not yet scheduled.')
 
 
-def register_user(wg, user):
-    if wg_register(user, wg):
+def register_user(val, user):
+    if wg_register(user, val):
         get_df.clear()
         st.rerun()
 
 
-def remove_user(wg, user):
-    if wg_unregister(user, wg):
+def remove_user(val, user):
+    if wg_unregister(user, val):
         get_df.clear()
         st.rerun()
 
 
-def assignchair_user(wg, user):
-    if wg_assign_chair(user, wg):
+def assignchair_user(val, user):
+    if wg_assign_chair(user, val):
         get_df.clear()
         st.rerun()
 
 
-def rescindchair_user(wg, user):
-    if wg_unassign_chair(user, wg):
+def rescindchair_user(val, user):
+    if wg_unassign_chair(user, val):
         get_df.clear()
         st.rerun()
 
@@ -159,56 +159,56 @@ def register(val):
         register_user(val, st.session_state['name'])
 
 
-def registersomeone(wg, user):
+def registersomeone(val, user):
     disabled = False
-    if registered(wg, user): disabled = True
-    if st.button('Register User', disabled=disabled, key='wg_register_btn_admin_'+wg):
-        register_user(wg, user)
+    if registered(val, user): disabled = True
+    if st.button('Register User', disabled=disabled, key='wg_register_btn_admin_'+val):
+        register_user(val, user)
 
 
-def removesomeone(wg, user):
+def removesomeone(val, user):
     disabled = True
-    if registered(wg, user): disabled = False
-    if st.button('Remove User', disabled=disabled, key='wg_unregister_btn_admin_'+wg):
-        remove_user(wg, user)
+    if registered(val, user): disabled = False
+    if st.button('Remove User', disabled=disabled, key='wg_unregister_btn_admin_'+val):
+        remove_user(val, user)
 
 
-def assignchair(wg, user):
+def assignchair(val, user):
     if st.session_state['username'] == 'btharp':
         disabled = False
-        if ischair(wg, user):
-            if st.button('Revoke WG Chair', disabled=disabled, key='wg_chair_btn_admin_r_'+wg):
-                rescindchair_user(wg, user)
+        if ischair(val, user):
+            if st.button('Revoke WG Chair', disabled=disabled, key='wg_chair_btn_admin_r_'+val):
+                rescindchair_user(val, user)
         else:
-            if st.button('Assign WG Chair', disabled=disabled, key='wg_chair_btn_admin_'+wg):
-                assignchair_user(wg, user)
+            if st.button('Assign WG Chair', disabled=disabled, key='wg_chair_btn_admin_'+val):
+                assignchair_user(val, user)
 
 
-def updatewgRoster(wg):
-    st.write(wg)
-    if (ischair(wg, st.session_state["name"])) or (st.session_state['username'] in officerlist()):
+def updatewgRoster(val):
+    st.write(val)
+    if (ischair(val, st.session_state["name"])) or (st.session_state['username'] in officerlist()):
         selectuser = st.selectbox(
                 label='Update WG Roster:',
                 options=member_names().to_list(),
                 index=None,
                 placeholder='Select..',
-                key='wg_admin_user_' + wg
+                key='wg_admin_user_' + val
             )
         if selectuser is not None:
             col1, col2, col3 = st.columns([1,1,1])
             with col1:
-                registersomeone(wg, selectuser)
+                registersomeone(val, selectuser)
             with col2:
-                removesomeone(wg, selectuser)
+                removesomeone(val, selectuser)
             if st.session_state['username'] in officerlist():
                 with col3:
-                    assignchair(wg, selectuser)
+                    assignchair(val, selectuser)
 
 
-def wgroster(wg):
-    if df_wg[wg] is not None:
+def wgroster(val):
+    if df_wg[val] is not None:
         _df = pd.DataFrame(
-                data=df_wg[wg]['Volunteers'],
+                data=df_wg[val]['Volunteers'],
                 columns=['Volunteers'])
         _df['sort'] = [searchname(name) for name in _df['Volunteers']]
         _df['Affiliations'] = [user_affiliations(name) for name in _df['Volunteers']]
@@ -217,26 +217,26 @@ def wgroster(wg):
         return _df
 
 
-def show_wgroster(wg):
+def show_wgroster(val):
     st.write('Working Group Roster')
     # st.caption('Names orderd by Surname')
-    df = wgroster(wg)
+    df = wgroster(val)
     # col1, col2 = st.columns([6,4])
     st.dataframe(
         data=df,
         column_order=['Volunteers', 'Affiliations'],
         hide_index=True)
-    if 'Volunteers' in df_wg[wg]:
-        email_list = contact_list(df_wg[wg]['Volunteers'])
+    if 'Volunteers' in df_wg[val]:
+        email_list = contact_list(df_wg[val]['Volunteers'])
         if len(email_list) > 0:
-            st.link_button(label='Email WG Members', url=f"mailto:?bcc={email_list}&subject=IEEE VT/OCS WG {wg}: ")
+            st.link_button(label='Email WG Members', url=f"mailto:?bcc={email_list}&subject=IEEE VT/OCS WG {val}: ")
         
 
-def wgchair_view(wg):
-    show_wgroster(wg)
+def wgchair_view(val):
+    show_wgroster(val)
     # show_wgschedule(wg)
     # update_wgschedule(wg)
-    updatewgRoster(wg)
+    updatewgRoster(val)
 
 
 def generateContent(val):
@@ -270,7 +270,7 @@ def generateContent(val):
 
 def runMain():
     # st.write(df_wg)
-    [generateContent(wg) for wg in get_wglist()]
+    [generateContent(val) for val in get_wglist()]
 
 
 def run():
