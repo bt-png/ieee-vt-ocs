@@ -270,7 +270,8 @@ def wg_chairemails():
     df_wg = get_df()
     names = []
     for val in get_wglist():
-        names.append(wgchair(val))
+        for name in wgchair(val):
+            names.append(name)
     return contact_list(names)
 
 
