@@ -327,9 +327,9 @@ def showWorkingGroupRoster(df_roster):
     st.markdown('---')
     col1, col2 = st.columns([1,1])
     col1.subheader('Working Groups')
-    email_wgchairs = roster.contact_list_votingmember()
-    st.caption(wg_chairs())
-    col2.link_button(label='Email WG Chairs', url=f"mailto:?to={email_wgchairs}&cc=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&subject=IEEE VT/OCS Standards Committee: WG Chairs")
+    #email_wgchairs = roster.contact_list_votingmember()
+    #st.caption(wg_chairs())
+    #col2.link_button(label='Email WG Chairs', url=f"mailto:?to={email_wgchairs}&cc=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&subject=IEEE VT/OCS Standards Committee: WG Chairs")
     with st.expander(label='View Working Group Rosters', expanded=False):
         runAdmin()
 
