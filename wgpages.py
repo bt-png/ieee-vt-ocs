@@ -265,11 +265,13 @@ def generateContent(val):
     st.markdown('---')
 
 
-def wg_chairs():
-    names = []
+def wg_chairemails():
+    global df_wg
+    df_wg = get_df()
+    emails = []
     for val in get_wglist():
-        names.append(wgchair(val))
-    return names
+        emails.append(contact_list(wgchair(val)))
+    return emails
 
 
 def runMain():
