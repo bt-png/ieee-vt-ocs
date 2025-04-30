@@ -265,6 +265,13 @@ def generateContent(val):
     st.markdown('---')
 
 
+def wg_chairs():
+    names = []
+    for val in get_wglist():
+        names.append(wgchair(val))
+    return names
+
+
 def runMain():
     # st.write(df_wg)
     [generateContent(val) for val in get_wglist()]
