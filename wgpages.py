@@ -268,10 +268,10 @@ def generateContent(val):
 def wg_chairemails():
     global df_wg
     df_wg = get_df()
-    emails = []
+    names = []
     for val in get_wglist():
-        emails.append(contact_list(wgchair(val)))
-    return emails
+        names.append(wgchair(val))
+    return contact_list(names)
 
 
 def runMain():
