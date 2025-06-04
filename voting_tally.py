@@ -19,7 +19,7 @@ def attendingnextmeeting():
         the group.\
         ')
     st.write('\
-        We are also still looking for room and meal sponsors, and meeting presenters. If you are interested in either, please [Contact the Officers](mailto:stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com).\
+        We are also still looking for room and meal sponsors, and meeting presenters. If you are interested in either, please [Contact the Officers](mailto:jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com).\
         ')
     st.caption('Please indicate if you plan to attend, and if so, if it will be in person or virtual.')
     with st.form(key='Future Attendance', clear_on_submit=False):
