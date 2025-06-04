@@ -41,25 +41,25 @@ def attendingnextmeeting():
     if existing_poll == 'Yes, in person':
         with st.container():
             st.write('Thank you for your attendance!')
-            st.subheader('Hotel booking information')
-            deldays = date(2024, 8, 20) - date.today()
-            if deldays.days > 0:
-                st.caption('The booking link is setup for the full duration for both OCS/TPSS meetings. Please update the dates if you intend only to be there for one of the meetings, the rate should remain.')
-                st.markdown(f"""
-                Booking Link: [Hilton Group Code CDT92B](https://www.hilton.com/en/book/reservation/deeplink/?ctyhocn=YTOCSDT&groupCode=CDT92B&arrivaldate=2024-09-08&departuredate=2024-09-13&cid=OM,WW,HILTONLINK,EN,DirectLink&fromId=HILTONLINKDIRECT)
+            # st.subheader('Hotel booking information')
+            # deldays = date(2024, 8, 20) - date.today()
+            # if deldays.days > 0:
+            #     st.caption('The booking link is setup for the full duration for both OCS/TPSS meetings. Please update the dates if you intend only to be there for one of the meetings, the rate should remain.')
+            #     st.markdown(f"""
+            #     Booking Link: [Hilton Group Code CDT92B](https://www.hilton.com/en/book/reservation/deeplink/?ctyhocn=YTOCSDT&groupCode=CDT92B&arrivaldate=2024-09-08&departuredate=2024-09-13&cid=OM,WW,HILTONLINK,EN,DirectLink&fromId=HILTONLINKDIRECT)
                 
-                The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well.
-                The cut-off date for the weblink is August 20th, 2024, so we have less than {deldays.days} days to book!
-                """)
-            else:
-                st.warning('The booking deadline has passed')
-                st.caption('The booking link is setup for the full duration for both OCS/TPSS meetings. Please update the dates if you intend only to be there for one of the meetings, the rate should remain.')
-                st.markdown(f"""
-                Booking Link: [Hilton Group Code CDT92B](https://www.hilton.com/en/book/reservation/deeplink/?ctyhocn=YTOCSDT&groupCode=CDT92B&arrivaldate=2024-09-08&departuredate=2024-09-13&cid=OM,WW,HILTONLINK,EN,DirectLink&fromId=HILTONLINKDIRECT)
+            #     The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well.
+            #     The cut-off date for the weblink is August 20th, 2024, so we have less than {deldays.days} days to book!
+            #     """)
+            # else:
+            #     st.warning('The booking deadline has passed')
+            #     st.caption('The booking link is setup for the full duration for both OCS/TPSS meetings. Please update the dates if you intend only to be there for one of the meetings, the rate should remain.')
+            #     st.markdown(f"""
+            #     Booking Link: [Hilton Group Code CDT92B](https://www.hilton.com/en/book/reservation/deeplink/?ctyhocn=YTOCSDT&groupCode=CDT92B&arrivaldate=2024-09-08&departuredate=2024-09-13&cid=OM,WW,HILTONLINK,EN,DirectLink&fromId=HILTONLINKDIRECT)
                 
-                The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well.
-                The cut-off date for the weblink has passed. It was August 20th, 2024! You may still try to coordinate through the hotel.
-                """)
+            #     The attendees can call 1-800-445-8667 or the hotel at 416-977-5000 and mention the group code CDT92B to make a booking as well.
+            #     The cut-off date for the weblink has passed. It was August 20th, 2024! You may still try to coordinate through the hotel.
+            #     """)
     elif existing_poll == 'Yes, virtually':
         st.write('Thank you for your attendance!')
     elif existing_poll == 'No, not this time':
