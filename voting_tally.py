@@ -8,15 +8,18 @@ from datetime import date
 
 def attendingnextmeeting():
     st.subheader('Do you plan to attend our next meeting?')
-    st.write('\
-        Firstly, we want to thank Toronto Transit Commission for hosting our next committee meeting on September 9th-10th!\
-        ')
+    # st.write('\
+    #     Firstly, we want to thank Toronto Transit Commission for hosting our next committee meeting on September 9th-10th!\
+    #     ')
+    st.write("\
+        We have been approved to use on of APTA's rooms for our next committee meeting on July 2nd!\
+        ")
     st.write('\
         We are asking you to let us know if and how you plan to attend, so we can be prepared for accomodating \
-        the group. TTC have also asked for an attendee list so they can speed up the check in process through security.\
+        the group.\
         ')
     st.write('\
-        We are also still looking for meal sponsors and meeting presenters. If you are interested in either, please [Contact the Officers](mailto:stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com).\
+        We are also still looking for room and meal sponsors, and meeting presenters. If you are interested in either, please [Contact the Officers](mailto:stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com).\
         ')
     st.caption('Please indicate if you plan to attend, and if so, if it will be in person or virtual.')
     with st.form(key='Future Attendance', clear_on_submit=False):

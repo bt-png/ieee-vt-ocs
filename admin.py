@@ -122,22 +122,28 @@ def showfutureattendance():
     df_poll = firestore.future_attendee_list()
     df_poll['Attending'] = ['Yes' in x for x in df_poll['Attendance Poll']]
     inattendance_total = df_poll[(df_poll['Attending'] == True)]['Attending'].count()
-    attendee_list = df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list()
-    attendee_list.sort()
-    txt = ''
-    for name in attendee_list:
-        txt += name
-        if name == attendee_list[-2]:
-            txt += ' and '
-        elif name != attendee_list[-1]:
-            txt += ', '
     inperson_total = df_poll[(df_poll['Attendance Poll'] == 'Yes, in person')]['Attending'].count()
+    st.write(f'There are currently {inattendance_total} total participants planning to attend, {inperson_total} of which are planning to attend in person.')
+    
+    # attendee_list = df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list()
+    # attendee_list.sort()
+    # txt = ''
+    # for name in attendee_list:
+    #     txt += name
+    #     if len(attendee_list) == 2:
+    #         if name == attendee_list[1]:
+    #             txt += ' and '
+    #     if len(attendee_list) > 2:
+    #         if name == attendee_list[-2]:
+    #             txt += ' and '
+    #         elif name != attendee_list[-1]:
+    #             txt += ', '
+    # st.caption('List of planned in-person attendee\'s')
+    # st.write(txt)
+    
     currentvotingmembership = roster.totals_votingmembers()
     inattendance_votingmembers = df_poll[(df_poll['Attending'] == True) & (df_poll['Status'] == 'Voting Member')]['Attending'].count()
     quorum = roster.meets_quorum(inattendance_votingmembers, currentvotingmembership)
-    st.write(f'There are currently {inattendance_total} total participants planning to attend, {inperson_total} of which are planning to attend in person.')
-    st.caption('List of planned in-person attendee\'s')
-    st.write(txt)
     
     col1, col2 = st.columns([4, 2])
     col1.caption('Expected Quorum')
@@ -432,7 +438,7 @@ def syncloginroster():
 
 def run():
     st.header('Officers Administration Page')
-    if (datetime.date(datetime.today()) == meetings.next_meeting_date()) or testing:
+    if (datetime.date(datetime.today()) <= meetings.next_meeting_date()) or testing:
        st.markdown('---')
        showfutureattendance()
     if False:

@@ -79,11 +79,12 @@ def meetingattendance():
 
 
 def pollfutureattendance():
-    if (datetime.today() < datetime(year=2024, month=9, day=9)) or testing:
+    if (datetime.date(datetime.today()) <= meetings.next_meeting_date()):
+    # if (datetime.today() < datetime(year=2025, month=7, day=2)) or testing:
     # if (datetime.date(datetime.today()) < meetings.next_meeting_date()) or testing:
-        col1, col2, col3 = st.columns([1, 6, 1])
-        with col2:
-            vt.attendingnextmeeting()
+        # col1, col2, col3 = st.columns([1, 6, 1])
+        # with col2:
+        vt.attendingnextmeeting()
         st.markdown('''---''')
 
 
