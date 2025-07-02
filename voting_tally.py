@@ -66,9 +66,9 @@ def attendingnextmeeting():
         st.write('Thank you for letting us know.')
 
 def nominations():
-    st.subheader('Call for Committee Chair')
+    st.subheader('Call for Standards Committee Chair')
     st.write('\
-        We have an opening for the position of IEEE VTS OCS Committee Chair\
+        We have an opening for the position of IEEE VTS/OCS SC Chair\
         , and are looking for nominations!\
         You may self-nominate or nominate someone else to be considered as Chair of the Committee.\
         All nominees will be provided to the VTS Board of Governers for their selection.')
