@@ -89,11 +89,11 @@ def pollfutureattendance():
 
 
 def nominations():
-    if (datetime.today() < datetime(year=2024, month=9, day=9)) or testing:
-        col1, col2, col3 = st.columns([1, 6, 1])
-        with col2:
-            # Call for Nominations 4/22 through 6/4, 2024
-            vt.nominations()
+    if (datetime.today() < datetime(year=2025, month=7, day=19)) or testing:
+        # col1, col2, col3 = st.columns([1, 6, 1])
+        # with col2:
+            # Call for Chair Nominations through 7/18, 2028
+        vt.nominations()
         st.markdown('''---''')
 
 
@@ -162,7 +162,7 @@ else:
     else:
         if memberwelcome():
                 meetingattendance()
-                pollfutureattendance()
+                # pollfutureattendance()
                 nominations()
                 voting()
                 workinggrouppages()

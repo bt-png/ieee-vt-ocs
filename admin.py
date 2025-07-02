@@ -182,16 +182,17 @@ def showfutureattendance():
 
 
 def shownominations():
-    st.subheader('Nominations')
-    st.caption('P1628')
-    df_P1628 = firestore.get_nominations('P1628')
-    st.dataframe(df_P1628, hide_index=True)
-    st.caption('P3357')
-    df_P3357 = firestore.get_nominations('P3357')
-    st.dataframe(df_P3357, hide_index=True)
-    st.caption('P3425')
-    df_P3425 = firestore.get_nominations('P3425')
-    st.dataframe(df_P3425, hide_index=True)
+    df_chair = firestore.get_chair_nominations('Chair2025')
+    st.subheader('Chair Nominations')
+    st.dataframe(df_chair, hide_index=True)
+    # st.caption('P1628')
+    # df_P1628 = firestore.get_nominations('P1628')
+    # st.caption('P3357')
+    # df_P3357 = firestore.get_nominations('P3357')
+    # st.dataframe(df_P3357, hide_index=True)
+    # st.caption('P3425')
+    # df_P3425 = firestore.get_nominations('P3425')
+    # st.dataframe(df_P3425, hide_index=True)
     st.markdown('---')
 
 
@@ -438,12 +439,11 @@ def syncloginroster():
 
 def run():
     st.header('Officers Administration Page')
-    if (datetime.date(datetime.today()) <= meetings.next_meeting_date()) or testing:
+    if (datetime.date(datetime.today()) < meetings.next_meeting_date()) or testing:
        st.markdown('---')
        showfutureattendance()
-    if False:
-        st.markdown('---')
-        shownominations()
+    st.markdown('---')
+    shownominations()
     df_roster = roster.df
     showroster(df_roster)
     addnewPerson(df_roster)

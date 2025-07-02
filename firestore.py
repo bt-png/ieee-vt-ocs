@@ -83,6 +83,30 @@ def get_existing_nomination(WG):
         st.session_state.auth_warning = 'Error: Please try again later'
 
 
+def get_chair_nominations(pos):
+    import roster
+    df = pd.DataFrame({
+        'Nominee': [],
+        'Status': [],
+        'Position': [],
+        'Qualification Statement': [],
+        'Nominator': [],
+        'Date': []
+    })
+    doc_ref = db.collection(pos)
+    for doc in doc_ref.stream():
+        nomination = doc.to_dict()
+        new_entry = pd.DataFrame([{
+            'Nominee': nomination['nominee'],
+            'Status': roster.member_status(nomination['nominee']),
+            'Position': nomination['position'],
+            'Qualification Statement': nomination['qual'],
+            'Nominator': nomination['nominator'],
+            'Date': nomination['date']
+            }])
+        df = pd.concat([df,new_entry], ignore_index=True)
+    return df
+
 def get_nominations(WG):
     try:
         doc_ref = db.collection(WG).document('nominees')
@@ -108,6 +132,21 @@ def post_nominations(df, WG):
     try:
         doc_ref = db.collection(WG).document('nominees')
         doc_ref.set(df_dict)
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+
+
+def submit_chair_nomination(name, qual):
+    nomination = {
+            'nominee': name.title(),
+            'position': 'Chair of Committee',
+            'qual': qual,
+            'nominator': st.session_state['name'],
+            'date': datetime.now()
+        }
+    try:
+        update_time, doc_ref = db.collection('Chair2025').add(nomination)
+        return True
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
 
