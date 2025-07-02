@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 st.set_page_config(
-        page_title='IEEE VT OCS Standards Committee',
+        page_title='IEEE VT/OCS Standards Committee',
         page_icon='🚊',
         layout='wide'
     )
@@ -24,7 +24,7 @@ import wgpages
 
 def home():
     col1, col2, col3 = st.columns([1, 6, 1])
-    col2.header('IEEE VT OCS Standards Committee')
+    col2.header('IEEE VT/OCS Standards Committee')
     col2.image(image='IMG_0079.jpg')
     # col2.button('test', on_click=testfun())
     do_you_have_an_account = st.empty()
