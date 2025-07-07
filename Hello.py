@@ -33,6 +33,7 @@ def home():
         user, status, username = st_auth.login(auth)
     elif do_you_have_an_account == 'Sign up':
         email, username, user = st_auth.register(auth, config)
+        st.sidebar.caption('Passwords must be a minimum length of 8, contain uppercase and lowercase letters, and include a special character.')
     elif do_you_have_an_account == 'I forgot my password':
         username, email, new_random_password = st_auth.forgotpassword(auth, config)
     elif do_you_have_an_account == 'I forgot my username':
