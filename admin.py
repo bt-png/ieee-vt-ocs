@@ -68,10 +68,8 @@ def addnewPerson(df):
                     'meeting': [None]
                     })
                 _df = pd.concat([_df, new_user], ignore_index=True)
-                # st.dataframe(_df)
                 if firestore.set_roster(_df):
                     st.success('Saved')
-                    # roster.refresh_df.clear()
                     roster.refresh_df()
 
 
@@ -86,7 +84,6 @@ def showroster(df):
         user_cat_input = col2.multiselect(
             f"Filter on {column}",
             _df[column].unique(),
-            #default=list(df[column].unique())
         )
         if len(user_cat_input) > 0:
             _df = _df[_df[column].isin(user_cat_input)]
@@ -106,7 +103,6 @@ def showroster(df):
     col2.link_button(label='Voting Members', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_votingmembers}&subject=IEEE VT/OCS Standards Committee: ")
     col3.link_button(label='Active Members', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_activemembers}&subject=IEEE VT/OCS Standards Committee: ")
     if col4.button('All Members'):
-        #col3.link_button(label='Try Email', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&bcc={email_all}subject=IEEE VT/OCS Standards Committee: ")
         st.warning('There are too many addressess to create an email automatically. Copy the list below.')
         st.link_button(label='Blank Email', url=f"mailto:?to=stephen-norton@ieee.org;jschlick@hntb.com;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com&subject=IEEE VT/OCS Standards Committee: ")
         st.caption('Voting Members')
@@ -124,22 +120,6 @@ def showfutureattendance():
     inattendance_total = df_poll[(df_poll['Attending'] == True)]['Attending'].count()
     inperson_total = df_poll[(df_poll['Attendance Poll'] == 'Yes, in person')]['Attending'].count()
     st.write(f'There are currently {inattendance_total} total participants planning to attend, {inperson_total} of which are planning to attend in person.')
-    
-    # attendee_list = df_poll[df_poll['Attendance Poll'] == 'Yes, in person']['Name'].to_list()
-    # attendee_list.sort()
-    # txt = ''
-    # for name in attendee_list:
-    #     txt += name
-    #     if len(attendee_list) == 2:
-    #         if name == attendee_list[1]:
-    #             txt += ' and '
-    #     if len(attendee_list) > 2:
-    #         if name == attendee_list[-2]:
-    #             txt += ' and '
-    #         elif name != attendee_list[-1]:
-    #             txt += ', '
-    # st.caption('List of planned in-person attendee\'s')
-    # st.write(txt)
     
     currentvotingmembership = roster.totals_votingmembers()
     inattendance_votingmembers = df_poll[(df_poll['Attending'] == True) & (df_poll['Status'] == 'Voting Member')]['Attending'].count()
@@ -214,7 +194,6 @@ def showattendance(df_roster):
     df_attendance = firestore.in_attendance()
     df_attendance = pd.merge(df_attendance, df_roster[['Name', 'Affiliation', 'E-mail']],  how='left', on='Name')
     _affiliations_count = df_attendance['Affiliation'].value_counts()
-    #
     if len(_affiliations_count) > 0:
         wordcloud = WordCloud(width=600, height=300, margin=10, prefer_horizontal=1, background_color=None).generate_from_frequencies(frequencies=_affiliations_count)
         plt.imshow(wordcloud.recolor(color_func=grey_color_func, random_state=3), interpolation='bilinear')
@@ -232,7 +211,6 @@ def showattendance(df_roster):
         else:
             st.warning('Quorum is not yet achieved')
     if col3.button('Refresh Attendance'):
-    #    firestore.in_attendance.clear()
         st.rerun()
     col1, col2, col3 = st.columns([1, 10, 10])
     df_member_attendance = pd.DataFrame({})
@@ -242,7 +220,6 @@ def showattendance(df_roster):
     df_member_attendance.rename(columns={'Status': 'In Attendance'}, inplace=True)
     df_member_attendance['Last Name'] = [lastname(name) for name in df_member_attendance['Name']]
     df_member_attendance = df_member_attendance.sort_values(by=['Last Name'])
-    # df_member_attendance = pd.merge(df_member_attendance, df_roster[['Name', 'Affiliation', 'E-mail']],  how='left', on='Name')
     col2.caption(f"Voting Members: {_inattendance_voting_members}")
     col2.dataframe(
         df_member_attendance, hide_index=True,
@@ -253,7 +230,6 @@ def showattendance(df_roster):
             }
         )
     df_nonmember_attendance = df_attendance[df_attendance['Status'] != 'Voting Member']
-    # df_nonmember_attendance = pd.merge(df_nonmember_attendance, df_roster[['Name', 'Affiliation', 'E-mail']],  how='left', on='Name')
     df_nonmember_attendance['Last Name'] = [lastname(name) for name in df_nonmember_attendance['Name']]
     df_nonmember_attendance = df_nonmember_attendance.sort_values(by=['Last Name'])
     col3.caption(f"Non-Voting Members, Non-Members, Staff: {len(df_nonmember_attendance)}")
@@ -285,46 +261,79 @@ def showMeetingAttendanceActive(df_roster):
 
 
 def showMeetingAttendanceRecord():
-    # if st.session_state['username'] in ['btharp']:
     with st.expander(label='View Prior Meeting Attendance', expanded=False):
         _df = meetings.schedule()
-        _df.drop(_df[~_df['recorded']].index, inplace=True)
+        # _df.drop(_df[~_df['recorded']].index, inplace=True)
+        # st.dataframe(_df, hide_index=True)
         meetingID = st.selectbox(
             label='Meeting Number',
-            options=_df['number'].values, 
+            options=_df['number'].values.astype(int), 
         )
         attendance = _df[_df['number']==meetingID]['attendance'].values[0]
         col1, col2 = st.columns([1,1])
         with col1:
-            # st.write(attendance.get('Voting Members').get('In Attendance'))
             st.subheader('Voting Membership Attendance')
-            _dfMembersInAttendance = pd.DataFrame(
-                data=attendance.get('Voting Members').get('In Attendance').items(),
-                columns=['Surname Ordered', 'In Attendance'])
-            _dfMembersInAttendance['In Attendance'] = ['Yes' if att else 'No' for att in _dfMembersInAttendance['In Attendance']]
-            _dfMembersInAttendance['sort'] = [roster.searchname(name) for name in _dfMembersInAttendance['Surname Ordered']]
-            _dfMembersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfMembersInAttendance['Surname Ordered']]
-            _dfMembersInAttendance.sort_values(by='sort', inplace=True)
-            st.dataframe(
-                data=_dfMembersInAttendance,
-                column_order=['Surname Ordered', 'Affiliations', 'In Attendance'],
-                hide_index=True)
+            try:
+                _dfMembersInAttendance = pd.DataFrame(
+                    data=attendance.get('Voting Members').get('In Attendance').items(),
+                    columns=['Surname Ordered', 'In Attendance'])
+                _dfMembersInAttendance['In Attendance'] = ['Yes' if att else 'No' for att in _dfMembersInAttendance['In Attendance']]
+                _dfMembersInAttendance['sort'] = [roster.searchname(name) for name in _dfMembersInAttendance['Surname Ordered']]
+                _dfMembersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfMembersInAttendance['Surname Ordered']]
+                _dfMembersInAttendance.sort_values(by='sort', inplace=True)
+                st.dataframe(
+                    data=_dfMembersInAttendance,
+                    column_order=['Surname Ordered', 'Affiliations', 'In Attendance'],
+                    hide_index=True)
+                yes_attended = _dfMembersInAttendance[_dfMembersInAttendance['In Attendance'] == 'Yes'].shape[0]
+                total_member = _dfMembersInAttendance.shape[0]
+            except Exception:
+                st.write('None')
         with col2:
             st.subheader('Additional Attendees')
-            _dfOthersInAttendance = pd.DataFrame(
-                data=attendance.get('Other Attendees'),
-                columns=['Surname Ordered'])
-            _dfOthersInAttendance['sort'] = [roster.searchname(name) for name in _dfOthersInAttendance['Surname Ordered']]
-            _dfOthersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfOthersInAttendance['Surname Ordered']]
-            _dfOthersInAttendance.sort_values(by='sort', inplace=True)
-            st.dataframe(
-                data=_dfOthersInAttendance,
-                column_order=['Surname Ordered', 'Affiliations'],
-                hide_index=True)
+            try:
+                _dfOthersInAttendance = pd.DataFrame(
+                    data=attendance.get('Other Attendees'),
+                    columns=['Surname Ordered'])
+                _dfOthersInAttendance['sort'] = [roster.searchname(name) for name in _dfOthersInAttendance['Surname Ordered']]
+                _dfOthersInAttendance['Affiliations'] = [roster.user_affiliations(name) for name in _dfOthersInAttendance['Surname Ordered']]
+                _dfOthersInAttendance.sort_values(by='sort', inplace=True)
+                st.dataframe(
+                    data=_dfOthersInAttendance,
+                    column_order=['Surname Ordered', 'Affiliations'],
+                    hide_index=True)
+                total_other = _dfOthersInAttendance.shape[0]
+            except Exception:
+                st.write('None')
+        try:
+            txt_attendance = f'The meeting had {total_other + yes_attended} attendees, with {yes_attended} being voting members. Quorum '
+            if yes_attended < 0.5 * total_member:
+                txt_attendance = txt_attendance + 'not'
+            txt_attendance += f' met with current membership being {total_member}, majority being required.'
+            st.write(txt_attendance)
+        except Exception:
+            pass
+        if testing:
+            with st.container(border=True):
+                st.write('roster audit')
+                audit_attended = []
+                _df_roster = roster.df.copy()
+                _df_roster.dropna(inplace=True)
+                _df_roster['InAttendance'] = [str(meetingID) in _df_roster[_df_roster['Name'] == x]['meeting'].tolist()[0] for x in _df_roster['Name']]
+                # _df_roster['meet66'] = '66' in _df_roster['meeting']
+                # _df_roster['df_meeting'] = [roster.meeting_attendance_record_All(x) for x in _df_roster['Name']]
+                # st.write(_df_roster[_df_roster['Name']=='Bob Kaminski']['df_meeting'])
+                st.write(_df_roster)
 
 
-def meetingAttendance(df_roster):
+def meetingssection(df_roster):
     st.markdown('---')
+    # st.subheader('Meetings')
+    # df = firestore.get_schedule()
+    # df_r = st.data_editor(df, num_rows='dynamic')
+    # if st.button('Post Schedule Changes'):
+    #     if firestore.post_schedule(df_r):
+    #         st.success('schedule updated')
     st.subheader('Meeting Attendance')
     showMeetingAttendanceActive(df_roster)
     showMeetingAttendanceRecord()
@@ -351,34 +360,6 @@ def syncloginroster():
             _df['Member Status'] = [roster.member_status(fn) for fn in _df['name']]
             st.write('Users Not Registered')
             st.dataframe(_df[_df['Member Status'] == 'Not Registered'])    
-            # fnlogin = st.selectbox(
-            #     label='Revise Information for:',
-            #     options=_df[_df['Member Status'] == 'Not Registered'].index,
-            #     index=None,
-            #     placeholder='Select..',
-            #     key='updateloginname'
-            # )
-            # if st.session_state['updateloginname'] is not None:
-            #     with st.form(key='updatelogin', clear_on_submit=True):
-            #         st.write('Update Login')
-            #         # changes = ['Affiliation', 'E-mail', 'Employer']
-            #         name = st.text_input('Name', placeholder='')                   
-            #         # email = st.text_input('E-mail', placeholder=roster.user_email(st.session_state['updaterostername']))
-            #         # employer = st.text_input('Employer', placeholder=roster.user_employer(st.session_state['updaterostername']))
-            #         if st.form_submit_button('Update'):
-            #             pass
-            #         #     updates = 0
-            #         #     if len(affiliate) > 0:
-            #         #         updates += 1
-            #         #         firestore.set_roster_update(roster.searchname(fn), 'Affiliation', affiliate)
-            #         #     if len(email) > 0:
-            #         #         updates += 1
-            #         #         firestore.set_roster_update(roster.searchname(fn), 'E-mail', email)
-            #         #     if len(employer) > 0:
-            #         #         updates += 1
-            #         #         firestore.set_roster_update(roster.searchname(fn), 'Employer', employer)
-            #         #     if updates > 0:
-            #         #         roster.refresh_df()
         with col2:
             st.subheader('Update Roster Database')
             fnroster = st.selectbox(
@@ -391,7 +372,6 @@ def syncloginroster():
             if st.session_state['updaterostername'] is not None:
                 with st.form(key='updateroster', clear_on_submit=True):
                     st.write('Update Roster')
-                    # changes = ['Affiliation', 'E-mail', 'Employer']
                     affiliate = st.text_input('Affiliation', placeholder=roster.user_affiliations(st.session_state['updaterostername']))
                     try:
                         idx = roster.employertype().index(roster.user_employertype(st.session_state['updaterostername']))
@@ -401,7 +381,6 @@ def syncloginroster():
                         'Employer Type',
                         options=roster.employertype(),
                         index=idx) 
-                    #st.text_input('Employer Type', placeholder=roster.user_affiliations(st.session_state['updaterostername']))  
                     email = st.text_input('E-mail', placeholder=roster.user_email(st.session_state['updaterostername']))
                     employer = st.text_input('Employer', placeholder=roster.user_employer(st.session_state['updaterostername']))
                     if st.session_state['username'] in ['btharp']:
@@ -432,21 +411,19 @@ def syncloginroster():
                                         st.session_state['updaterostername'], roster.searchname(st.session_state['updaterostername']),
                                         revisename, roster.searchname(revisename)
                                         )
-                        # if updates > 0:
-                            # roster.refresh_df.clear()
-                            # roster.refresh_df()
+
 
 
 def run():
     st.header('Officers Administration Page')
-    if (datetime.date(datetime.today()) < meetings.next_meeting_date()) or testing:
-       st.markdown('---')
-       showfutureattendance()
+    # if (datetime.date(datetime.today()) < meetings.next_meeting_date()) or testing:
+    #    st.markdown('---')
+    #    showfutureattendance()
     st.markdown('---')
     shownominations()
     df_roster = roster.df
     showroster(df_roster)
     addnewPerson(df_roster)
     syncloginroster()
-    meetingAttendance(df_roster)
+    meetingssection(df_roster)
     showWorkingGroupRoster(df_roster)

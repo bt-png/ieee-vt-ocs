@@ -99,6 +99,25 @@ def member_status(FullName):
         return 'Not Registered'
 
 
+def meeting_attendance_record_All(FullName):
+    allmeetings = meetings.schedule()
+    allmeetings.drop(allmeetings[~allmeetings['recorded']].index, inplace=True)
+    allmeetings['Attended'] = False
+    txt = df['meeting'].loc[df['Name'] == FullName].copy()
+    txt.reset_index(drop=True, inplace=True)
+    _df = pd.DataFrame.from_dict(txt[0], orient='index')
+    _df['Meeting'] = _df.index
+    _df.rename(columns={0: 'Attended'}, inplace=True)
+    for meet in allmeetings['number'].astype(int):
+        if str(meet) not in _df['Meeting'].to_list():
+            _newrow = pd.DataFrame({'Meeting': [str(meet)], 'Attended': [False]})
+            _df = pd.concat([_df, _newrow], ignore_index=True)
+    _df.reset_index(drop=True, inplace=True)
+    _df.sort_values(by='Meeting', ascending=True, inplace=True)
+    _df = _df.set_index(['Meeting'])
+    return _df
+
+
 def meeting_attendance_record(FullName):
     allmeetings = meetings.schedule()
     allmeetings.drop(allmeetings[~allmeetings['recorded']].index, inplace=True)
@@ -108,7 +127,7 @@ def meeting_attendance_record(FullName):
     _df = pd.DataFrame.from_dict(txt[0], orient='index')
     _df['Meeting'] = _df.index
     _df.rename(columns={0: 'Attended'}, inplace=True)
-    for meet in allmeetings['number'].tail(4):
+    for meet in allmeetings['number'].astype(int).tail(4):
         if str(meet) not in _df['Meeting'].to_list():
             _newrow = pd.DataFrame({'Meeting': [str(meet)], 'Attended': [False]})
             _df = pd.concat([_df, _newrow], ignore_index=True)
