@@ -420,7 +420,7 @@ def run():
     #    st.markdown('---')
     #    showfutureattendance()
     st.markdown('---')
-    shownominations()
+    # shownominations()
     df_roster = roster.df
     showroster(df_roster)
     addnewPerson(df_roster)
