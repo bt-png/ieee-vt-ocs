@@ -12,7 +12,7 @@ from wgpages import runAdmin
 from wgpages import wg_chairemails
 
 
-testing = False
+testing = True
 
 
 def lastname(name):
@@ -258,6 +258,20 @@ def showMeetingAttendanceActive(df_roster):
                 if testing:
                     if st.button('Archive Roster'):
                         firestore.archive_roster()
+                    if st.button('Archive Attendance'):
+                        firestore.archive_schedule()
+
+def showMeetingsRecord():
+    _df = meetings.schedule()
+    with st.expander(label='View Scheduled Meetings', expanded=False):
+        st.subheader('Scheduled Meetings')
+        edited_df = st.data_editor(
+            _df[~_df['recorded']],
+            num_rows='dynamic',
+            column_order=['number','type','location','start','end']
+            )
+        if st.button('Update Schedule'):
+            st.success(firestore.post_schedule(edited_df))
 
 
 def showMeetingAttendanceRecord():
@@ -337,6 +351,7 @@ def meetingssection(df_roster):
     st.subheader('Meeting Attendance')
     showMeetingAttendanceActive(df_roster)
     showMeetingAttendanceRecord()
+    showMeetingsRecord()
 
 
 def showWorkingGroupRoster(df_roster):

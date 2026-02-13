@@ -208,10 +208,10 @@ def postUpdatedMemberStatus():
                 status_dict[row.loc['Name']] = {'Previous Status': row.loc['Status'], 'New Status': NewStatus}
                 # st.text(status_dict)
                 # _df_status = pd.concat([_df_status, pd.DataFrame.from_dict(new_row)], ignore_index=True)
-        else:
-            if row.loc['Status'] != 'O':
-                st.text(row.loc['Name'])
-                st.text(row.loc['Status'])
+        # else:
+        #     if row.loc['Status'] != 'O':
+        #         st.text(row.loc['Name'])
+        #         st.text(row.loc['Status'])
     df_status = pd.DataFrame.from_dict(status_dict, orient='index')
     if df_status.empty:
         st.write('No updates to membership status required.')

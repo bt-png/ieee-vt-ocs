@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+from math import ceil
 import pandas as pd
 
 ### Firestore Authentication
@@ -333,40 +334,41 @@ def get_schedule():
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
 
-# def post_schedule(dfinput):
-#     df = dfinput.copy()
-#     df['Index'] = 'Meeting ' + (df['number'].astype(int)).astype(str)
-#     df = df.set_index('Index')
-#     df_dict = df.transpose().to_dict()
-#     # st.write(type(df_dict))
-#     for meeting, value in df_dict.items():
-#         if 'attendance' in value:
-#             if value['attendance'] is not None:
-#                 # st.write(value['attendance'])
-#                 # att = json.loads(value['attendance'])
-#                 import ast
-#                 att = ast.literal_eval(value['attendance'])
-#                 # st.write(att)
-#                 df_dict[meeting]['attendance'] = att
-#     # st.write(df_dict)
-#     try:
-#         doc_ref = db.collection('meetings').document('data')
-#         doc = doc_ref.get()
-#         if doc.exists:
-#             doc_ref.set(df_dict)
-#             return True
-#         else:
-#             st.write('doc does not exist')
-#     except Exception as error:
-#         st.session_state.auth_warning = 'Error: Please try again later'
-#         return False
+
+def post_schedule(dfinput):
+    df = dfinput.copy()
+    df['Index'] = 'Meeting ' + (df['number'].astype(int)).astype(str)
+    df = df.set_index('Index')
+    df_dict = df.transpose().to_dict()
+    try:
+        doc_ref = db.collection('meetings').document('data')
+        doc = doc_ref.get()
+        if doc.exists:
+            existval = doc.to_dict()
+            columns = ['type', 'location', 'start', 'end']
+            for key in df_dict.keys():
+                if key in existval.keys():
+                    for val in columns:
+                        if df_dict[key][val] != existval[key][val]:
+                            existval[key].update({val: df_dict[key][val]})
+                else:
+                    existval.update({key: df_dict[key]})
+                    existval[key].update({'recorded': False})
+            doc_ref.set(existval)
+            return True
+        else:
+            st.write('doc does not exist')
+    except Exception as error:
+        st.session_state.auth_warning = 'Error: Please try again later'
+        return False
+
 
 def archive_schedule():
-    doc_ref = db.collection('roster').document('contactlist')
+    doc_ref = db.collection('meetings').document('data')
     doc = doc_ref.get()
     if doc.exists:
         val = doc.to_dict()
-    doc_ref = db.collection('roster').document('contactlist_archive_20240529')
+    doc_ref = db.collection('meetings').document('data_archive')
     doc_ref.set(val)
 
 #---------roster----------------
@@ -442,7 +444,7 @@ def archive_roster():
     doc = doc_ref.get()
     if doc.exists:
         val = doc.to_dict()
-    doc_ref = db.collection('roster').document('contactlist_archive_20240816')
+    doc_ref = db.collection('roster').document('contactlist_archive')
     doc_ref.set(val)
 
 
@@ -506,20 +508,16 @@ def in_attendance():
     return df
 
 def post_schedule_meeting_update(dfinput, meetingnumber):
-    ref_index = 'Meeting ' + str(meetingnumber)
+    ref_index = 'Meeting ' + str(int(meetingnumber))
     df = dfinput.copy()
-    df['Index'] = 'Meeting ' + df['number'].astype(str)
-    df = df.set_index('Index')
     df_dict = df.transpose().to_dict()
     try:
         doc_ref = db.collection('meetings').document('data')
         doc = doc_ref.get()
         if doc.exists:
             val = doc.to_dict()
-            if 'attendance' not in val[ref_index]:
-                val[ref_index]['attendance'] = df_dict[ref_index]['attendance']
-                val[ref_index]['recorded'] = True
-                st.write(val[ref_index]['number'])
+            val[ref_index].update({'attendance': df_dict[meetingnumber]['attendance']})
+            val[ref_index].update({'recorded': True})
             doc_ref.set(val)
             return True
         else:
@@ -527,3 +525,4 @@ def post_schedule_meeting_update(dfinput, meetingnumber):
     except Exception as error:
         st.session_state.auth_warning = 'Error: Please try again later'
         return False
+
