@@ -511,8 +511,6 @@ def post_schedule_meeting_update(dfinput, meetingnumber):
     ref_index = 'Meeting ' + str(int(meetingnumber))
     df = dfinput.copy()
     df_dict = df.transpose().to_dict()
-    st.write('update')
-    st.write(df_dict[meetingnumber])
     try:
         doc_ref = db.collection('meetings').document('data')
         doc = doc_ref.get()
