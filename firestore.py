@@ -368,7 +368,7 @@ def archive_schedule():
     doc = doc_ref.get()
     if doc.exists:
         val = doc.to_dict()
-    doc_ref = db.collection('meetings').document('data_archive_20260212')
+    doc_ref = db.collection('meetings').document('data_archive')
     doc_ref.set(val)
 
 #---------roster----------------
@@ -444,7 +444,7 @@ def archive_roster():
     doc = doc_ref.get()
     if doc.exists:
         val = doc.to_dict()
-    doc_ref = db.collection('roster').document('contactlist_archive_20260212')
+    doc_ref = db.collection('roster').document('contactlist_archive')
     doc_ref.set(val)
 
 
