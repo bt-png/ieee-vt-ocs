@@ -12,7 +12,7 @@ from wgpages import runAdmin
 from wgpages import wg_chairemails
 
 
-testing = True
+testing = False
 
 
 def lastname(name):
