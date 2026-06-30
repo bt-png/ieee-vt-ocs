@@ -15,6 +15,7 @@ def run():
                 "Media Chair - Eric Parsons - [eric.parsons@southwire.com](mailto:eric.parsons@southwire.com)  \n"
                 "[Contact the Officers](mailto:jschlick@hntb.com;moisesramos@ieee.org;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com;allen.jennifer@ieee.org)"
     )
+    st.page_link(page=f'mailto:?to=jschlick@hntb.com;moisesramos@ieee.org;heather.riebeling@aecom.com;brett.tharp@stvinc.com;eric.parsons@southwire.com;allen.jennifer@ieee.org&subject=IEEE VT/OCS Standards Committee: ', label='Contact the Officers')
     st.page_link(page='https://vtsociety.org/committee/overhead-contact-systems-standards-committee', label='IEEE VT/OCS')
     st.page_link(page='https://ieee-sa.imeetcentral.com/vts-ocs-sc/home', label='IEEE SA Committee Workspace')
     
