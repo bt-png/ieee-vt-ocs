@@ -11,9 +11,7 @@ from datetime import datetime
 from wgpages import runAdmin
 from wgpages import wg_chairemails
 
-
 testing = False
-
 
 def lastname(name):
     try:

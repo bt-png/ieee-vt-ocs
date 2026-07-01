@@ -3,7 +3,7 @@ import streamlit as st
 
 def officerlist():
     # Username of Officers
-    return ['btharp', 'schlick33', 'ucme4me', 'hriebeling', 'moisesramos']
+    return ['btharp', 'schlick33', 'ucme4me', 'hriebeling', 'moisesramos', 'jenallen']
 
 
 def run():

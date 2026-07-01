@@ -7,6 +7,7 @@ st.set_page_config(
     )
 
 testing = False
+
 import streamlit_authentication as st_auth
 import firestore
 config = firestore.openconfig()
